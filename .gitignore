@@ -1,3 +1,4 @@
-/build/
+build/
 .vscode
-*.in
+
+/*/data/day*.in

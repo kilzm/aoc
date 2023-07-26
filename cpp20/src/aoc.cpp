@@ -20,10 +20,10 @@ void run_day(int day_num, Day *day, std::string file_path) {
     std::cout << "------------ Day " << day_num << " ------------" << std::endl;
     std::cout << "Part 1: " << part1 << " | Time: " << part1_time << std::endl;
     std::cout << "Part 2: " << part2 << " | Time: " << part2_time << std::endl;
-    std::cout << "Combined: " << part1_time + part2_time << ::std::endl;
+    std::cout << "Combined: " << part1_time + part2_time << ::std::endl << std::endl;
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     Days days;
     const int num_days = 3;
 

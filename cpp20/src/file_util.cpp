@@ -23,3 +23,14 @@ std::vector<std::string> FileUtil::read_lines(std::string filename)
     infile.close();
     return result;
 }
+
+std::vector<std::vector<char>> FileUtil::read_matrix(std::string filename)
+{
+    std::vector<std::string> lines = read_lines(filename);
+    std::vector<std::vector<char>> result;
+    for (auto line : lines) {
+        std::vector<char> row(line.begin(), line.end());
+        result.push_back(row);
+    }
+    return result;
+}

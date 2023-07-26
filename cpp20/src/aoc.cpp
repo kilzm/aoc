@@ -1,6 +1,5 @@
 #include <iostream>
 #include <filesystem>
-#include <format>
 #include <chrono>
 
 #include "days.h"
@@ -26,9 +25,9 @@ void run_day(int day_num, Day *day, std::string file_path) {
 
 int main(int argc, char *argv[]) {
     Days days;
-    const int num_days = 2;
+    const int num_days = 3;
 
-     const bool test = false;
+    const bool test = false;
 
     fs::path file_path = __FILE__;
     fs::path data_dir = file_path.parent_path() / ".." / "data";

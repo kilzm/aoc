@@ -5,11 +5,13 @@
 
 #include "day1.h"
 #include "day2.h"
+#include "day3.h"
 
 Days::Days()
 {
     m_days[0] = new Day1();
     m_days[1] = new Day2();
+    m_days[2] = new Day3();
 }
 
 Days::~Days()

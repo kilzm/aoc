@@ -9,7 +9,7 @@ class Day
   
   public:
     Day(int day);
-    ~Day();
+    virtual ~Day();
     virtual std::string part1(std::string filename);
     virtual std::string part2(std::string filename);
 };

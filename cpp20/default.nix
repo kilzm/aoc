@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , cmake
+, re2
 }:
 
 stdenv.mkDerivation {
@@ -11,5 +12,5 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ cmake ];
 
-  buildInputs = [];
+  buildInputs = [ re2 ];
 }

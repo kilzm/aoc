@@ -6,10 +6,14 @@
 
 #include "day.h"
 
+
+typedef std::vector<std::pair<std::string, std::string>> Passport;
+typedef std::vector<Passport> Passports;
+
 class Day4 : public Day
 {
   private:
-    std::vector<std::unordered_map<std::string, std::string>> read_input(std::string filename);
+    Passports read_input(std::string filename);
 
   public:
     Day4();

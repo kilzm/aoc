@@ -67,7 +67,7 @@ std::string Day4::part1(std::string filename)
 
 std::string Day4::part2(std::string filename)
 {
-    auto check_year = [](std::string year_s, int lower, int upper) -> bool {
+    auto check_year = [](std::string year_s, int lower, int upper) {
         try {
             int year = std::stoi(year_s);
             return lower <= year && year <= upper;

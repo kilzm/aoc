@@ -9,4 +9,4 @@ set(Aoc_SOURCES
     day4.cpp
     )
 
-add_executable(aoc ${Aoc_SOURCES})
+add_executable(aoc2020 ${Aoc_SOURCES})

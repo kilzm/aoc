@@ -23,20 +23,32 @@ void run_day(int day_num, Day *day, std::string file_path) {
     std::cout << "Combined: " << part1_time + part2_time << ::std::endl << std::endl;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    fs::path exec_dir = fs::path(argv[0]).parent_path();
     Days days;
     const int num_days = 4;
-
     const bool test = false;
 
-    fs::path file_path = __FILE__;
-    fs::path data_dir = file_path.parent_path() / ".." / "data";
-    if (test) { data_dir /= "test"; }
+
+    std::string home_dir;
+    if (const char* home_env = std::getenv("HOME")) {
+        home_dir = home_env;
+    } else {
+        std::cerr << "$HOME is unset" << std::endl;
+        exit(1);
+    }
+    
+    std::string data_dir;
+    if (test) {
+        data_dir = exec_dir.string() + "/../data/test";
+    } else {
+        data_dir = home_dir + "/.aoc_data/2020";
+    }
 
     for(int i = 1; i < num_days + 1; ++i) {
         Day *day = days.get_day(i);
         std::string file_name = "day" + std::to_string(i) + ".in";
-        std::string file_path = (data_dir / file_name).string();
+        std::string file_path = data_dir + "/" + file_name;
         run_day(i, day, file_path);
     }
 }

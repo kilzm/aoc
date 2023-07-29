@@ -12,7 +12,7 @@ struct slope {
 class Day3 : public Day
 {
   private:
-    std::vector<std::vector<char>> read_input(std::string filename);
+    std::vector<std::string> read_input(std::string filename);
 
   public:
     Day3();

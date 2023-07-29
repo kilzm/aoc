@@ -25,7 +25,7 @@ void run_day(int day_num, Day *day, std::string file_path) {
 
 int main() {
     Days days;
-    const int num_days = 3;
+    const int num_days = 4;
 
     const bool test = false;
 

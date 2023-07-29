@@ -6,6 +6,7 @@ set(Aoc_SOURCES
     day1.cpp
     day2.cpp
     day3.cpp
+    day4.cpp
     )
 
 add_executable(aoc ${Aoc_SOURCES})

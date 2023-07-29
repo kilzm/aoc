@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include "day.h"
 
-struct Slope {
+struct slope {
     std::size_t x, y;
 };
 

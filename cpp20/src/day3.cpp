@@ -20,7 +20,7 @@ std::string Day3::part1(std::string filename)
     const std::size_t col_count = forest[0].size();
     std::size_t row = 0, col = 0;
     std::size_t tree_count = 0;
-    Slope slope = {.x = 3, .y = 1};
+    slope slope = {.x = 3, .y = 1};
     while (row != forest.size() - 1) {
         row += slope.y;
         col = (col + slope.x) % col_count;
@@ -36,7 +36,7 @@ std::string Day3::part2(std::string filename)
 {
     const std::vector<std::vector<char>> forest = read_input(filename);
     const std::size_t col_count = forest[0].size();
-    const std::vector<Slope> slopes = {
+    const std::vector<slope> slopes = {
         {.x = 1, .y = 1},
         {.x = 3, .y = 1},
         {.x = 5, .y = 1},

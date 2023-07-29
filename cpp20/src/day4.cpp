@@ -3,7 +3,6 @@
 #include <sstream>
 #include <functional>
 #include <unordered_map>
-#include <iostream>
 
 #include "day4.h"
 #include "file_util.h"
@@ -14,7 +13,6 @@ Day4::~Day4() {};
 Passports Day4::read_input(std::string filename)
 {
     FileUtil fileutil;
-    std::string s = "abc";
     std::vector<std::string> lines = fileutil.read_lines(filename);
     lines.push_back("\n");
     Passports passports;

@@ -13,6 +13,7 @@
         };
 
         apps = rec {
+          aoc2020 = flake-utils.lib.mkApp { drv = self.packages.${system}.aoc2020; };
         };
       }
     );

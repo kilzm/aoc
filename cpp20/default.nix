@@ -4,7 +4,7 @@
 }:
 
 stdenv.mkDerivation {
-  pname = "aoc-cpp-2020";
+  pname = "aoc2020";
   version = "1.0";
 
   src = ./.;

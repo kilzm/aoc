@@ -1,6 +1,5 @@
 #include <vector>
 #include <string>
-#include <iostream>
 #include <algorithm>
 
 #include "day5.h"

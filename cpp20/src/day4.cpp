@@ -14,7 +14,7 @@ Passports Day4::read_input(std::string filename)
 {
     FileUtil fileutil;
     std::vector<std::string> lines = fileutil.read_lines(filename);
-    lines.push_back("\n");
+    lines.push_back("");
     Passports passports;
 
     auto split_into_pair = [](std::string key_val) { 

@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 #include "file_util.h"
@@ -14,51 +15,36 @@ std::vector<std::string> FileUtil::read_lines(std::string filename)
         std::cerr << "error: opening file " << filename << std::endl;
     }
 
-    std::vector<std::string> result;
+    std::vector<std::string> lines;
     std::string line;
     while (std::getline(infile, line)) {
-        result.push_back(line);
+        lines.push_back(line);
     }
 
     infile.close();
-    return result;
+    return lines;
 }
 
-std::vector<std::string> FileUtil::read_split_double_newlines(std::string filename)
+std::vector<std::vector<std::string>> FileUtil::read_word_array(std::string filename)
 {
     std::ifstream infile(filename);
-
 
     if (!infile) {
         std::cerr << "error: opening file " << filename << std::endl;
     }
-
-    std::vector<std::string> result;
-    std::string block;
+    
+    std::vector<std::vector<std::string>> split_lines;
     std::string line;
     while (std::getline(infile, line)) {
-        if (line.empty()) {
-            result.push_back(block);
-            block.clear();
-            continue;
+        std::istringstream linestream(line);
+        std::string word;
+        std::vector<std::string> words;
+        while (std::getline(linestream, word, ' ')) {
+            words.push_back(word);
         }
-        block.append(line + "\n");
+        split_lines.push_back(words);
     }
-    result.push_back(block);
 
     infile.close();
-    return result;
-}
-
-std::vector<std::vector<char>> FileUtil::read_matrix(std::string filename)
-{
-    std::vector<std::string> lines = read_lines(filename);
-    std::vector<std::vector<char>> result;
-
-    for (auto line : lines) {
-        std::vector<char> row(line.begin(), line.end());
-        result.push_back(row);
-    }
-
-    return result;
+    return split_lines;
 }

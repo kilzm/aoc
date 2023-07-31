@@ -10,10 +10,12 @@
       {
         packages = rec {
           aoc2020 = pkgs.callPackage ./cpp20 {};
+          default = aoc2020;
         };
 
         apps = rec {
           aoc2020 = flake-utils.lib.mkApp { drv = self.packages.${system}.aoc2020; };
+          default = aoc2020;
         };
       }
     );

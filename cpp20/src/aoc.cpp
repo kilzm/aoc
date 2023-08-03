@@ -11,11 +11,15 @@ void run_day(int day_num, Day *day, std::string file_path) {
     auto t0 = ch::high_resolution_clock::now();
     std::string part1 = day->part1(file_path);
     auto t1 = ch::high_resolution_clock::now();
-    std::string part2 = day->part2(file_path);
+    
+    day->part1_result = part1;
+
     auto t2 = ch::high_resolution_clock::now();
+    std::string part2 = day->part2(file_path);
+    auto t3 = ch::high_resolution_clock::now();
 
     auto part1_time = ch::duration_cast<ch::microseconds>(t1 - t0);
-    auto part2_time = ch::duration_cast<ch::microseconds>(t2 - t1);
+    auto part2_time = ch::duration_cast<ch::microseconds>(t3 - t2);
     
     std::cout << "------------ Day " << day_num << " ------------" << std::endl;
     std::cout << "Part 1: " << part1 << " | Time: " << part1_time << std::endl;
@@ -26,7 +30,7 @@ void run_day(int day_num, Day *day, std::string file_path) {
 int main(int argc, char *argv[]) {
     fs::path exec_dir = fs::path(argv[0]).parent_path();
     Days days;
-    const int num_days = 8;
+    const int num_days = 9;
     const bool test = false;
 
 

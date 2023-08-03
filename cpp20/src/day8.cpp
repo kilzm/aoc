@@ -1,6 +1,5 @@
 #include <vector>
 #include <string>
-#include <iostream>
 
 #include "day8.h"
 #include "file_util.h"

@@ -1,8 +1,5 @@
 #include <vector>
 #include <string>
-#include <iostream>
-#include <deque>
-#include <algorithm>
 
 #include "day9.h"
 #include "file_util.h"

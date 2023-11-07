@@ -7,7 +7,6 @@
 Day9::Day9():Day(8) {}
 Day9::~Day9() {}
 
-
 std::vector<long> Day9::read_input(std::string filename)
 {
     FileUtil fileutil;
@@ -20,7 +19,6 @@ std::vector<long> Day9::read_input(std::string filename)
 
     return numbers;
 }
-
 
 std::string Day9::part1(std::string filename)
 {

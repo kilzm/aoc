@@ -47,7 +47,6 @@ std::string Day5::part2(std::string filename)
     std::vector<int> seat_ids = read_input(filename);
     std::sort(seat_ids.begin(), seat_ids.end());
     int min = seat_ids.front();
-    int max = seat_ids.back();
     for (auto id : seat_ids) {
         if (min != id) return std::to_string(min);
         min++;

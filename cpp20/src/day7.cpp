@@ -8,7 +8,7 @@
 #include "day7.h"
 #include "file_util.h"
 
-Day7::Day7():Day(6) {};
+Day7::Day7():Day(6) {}
 Day7::~Day7() {}
 
 Bags Day7::read_input(std::string filename)
@@ -20,7 +20,7 @@ Bags Day7::read_input(std::string filename)
     for (const auto& words : word_array) {
         std::string color = words[0] + words[1];
         BagContent content;
-        for (int i = 4; i < words.size(); i += 4) {
+        for (std::size_t i = 4; i < words.size(); i += 4) {
             if (words[i] == "no") continue;
             int amount = std::stoi(words[i]);
             std::string color = words[i + 1] + words[i + 2];

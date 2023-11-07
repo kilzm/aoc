@@ -60,7 +60,7 @@ std::string Day6::part2(std::string filename)
                 table[c - 'a'] += 1;
             }
         }
-        for (auto n : table) {
+        for (std::size_t n : table) {
             if (n == group.size()) sum++;
         }
     }

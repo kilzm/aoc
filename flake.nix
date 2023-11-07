@@ -9,7 +9,7 @@
       let pkgs = nixpkgs.legacyPackages.${system}; in
       {
         packages = rec {
-          aoc2020 = pkgs.callPackage ./cpp20 {};
+          aoc2020 = pkgs.callPackage ./cpp20 { stdenv = pkgs.gcc13Stdenv; };
           default = aoc2020;
         };
 

@@ -12,6 +12,8 @@
 #include "day7.h"
 #include "day8.h"
 #include "day9.h"
+#include "day10.h"
+#include "day11.h"
 
 Days::Days()
 {
@@ -24,6 +26,8 @@ Days::Days()
     m_days[6] = new Day7();
     m_days[7] = new Day8();
     m_days[8] = new Day9();
+    m_days[9] = new Day10();
+    m_days[10] = new Day11();
 }
 
 Days::~Days()

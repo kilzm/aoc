@@ -30,7 +30,7 @@ void run_day(int day_num, Day *day, std::string file_path) {
 int main(int argc, char *argv[]) {
     fs::path exec_dir = fs::path(argv[0]).parent_path();
     Days days;
-    const int num_days = 12;
+    const int num_days = 13;
     const bool test = false;
 
 

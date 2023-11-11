@@ -15,7 +15,7 @@ set(Aoc_SOURCES
     day10.cpp
     day11.cpp
     day12.cpp
-    # day13.cpp
+    day13.cpp
     # day14.cpp
     # day15.cpp
     # day16.cpp

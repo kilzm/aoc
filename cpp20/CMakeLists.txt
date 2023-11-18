@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -O3")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -O3 -mbmi2")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 find_package(OpenMP REQUIRED)

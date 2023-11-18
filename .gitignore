@@ -4,5 +4,6 @@ result
 
 /*/data/day*.in
 .ccls-cache/
+.cache/
 .direnv/
 compile_commands.json

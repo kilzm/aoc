@@ -1,12 +1,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <cmath>
 #include <climits>
-#include <iostream>
 #include <numeric>
 #include <tuple>
-#include <assert.h>
 
 #include "day13.h"
 #include "file_util.h"
@@ -69,7 +66,7 @@ std::string Day13::part2(std::string filename)
         if (bus == -1) continue;
         buses.push_back(std::make_pair((bus - i) % bus, bus));
     }
-
+    
     int64_t m = std::accumulate(buses.begin(), buses.end(), static_cast<int64_t>(1),
                                 [](int64_t acc, auto& bus) { return acc * bus.second; });
     int64_t result = 0;

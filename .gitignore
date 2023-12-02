@@ -7,3 +7,5 @@ result
 .cache/
 .direnv/
 compile_commands.json
+
+ols.json

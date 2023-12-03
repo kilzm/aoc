@@ -9,8 +9,8 @@ import "core:unicode/utf8"
 
 day01 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	content := input[:]
-	for line in strings.split_lines_iterator(&content) {
+	it := input[:]
+	for line in strings.split_lines_iterator(&it) {
 		part1 += get_calibration_value(line)
 		part2 += get_actual_calibration_value(line)
 	}
@@ -36,11 +36,11 @@ get_calibration_value :: proc(line: string) -> int {
 }
 
 @(private = "file")
-get_actual_calibration_value :: proc(line: string) -> int {
+get_actual_calibration_value :: proc(line: string) -> int  {
 	spelled :: []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 	get_first_digit :: proc(line: string) -> int {
 		for i := 0; i < len(line); i += 1 {
-			substr := line[i:]
+            substr := line[i:]
 			if c := utf8.rune_at(substr, 0); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
@@ -70,14 +70,12 @@ get_actual_calibration_value :: proc(line: string) -> int {
 	return get_first_digit(line) * 10 + get_last_digit(line)
 }
 
+@(private = "file")
+test_input_p1 :: "1abc2\n" + "a1b2c3d4e5f\n" + "pqr3stu8vwx\n" + "treb7uch"
+
 @(test)
 test_example_d01_p1 :: proc(t: ^testing.T) {
-	input := strings.join(
-		{"1abc2", "a1b2c3d4e5f", "pqr3stu8vwx", "treb7uch"},
-		"\n",
-	);defer delete(input)
-
-	part1, _ := day01(input)
+	part1, _ := day01(test_input_p1)
 	part1_expected := int(142)
 	testing.expect(
 		t,
@@ -86,22 +84,20 @@ test_example_d01_p1 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private = "file")
+test_input_p2 :: (
+    "two1nine\n" +
+    "eightwothree\n" +
+    "abcone2threexyz\n" +
+    "xtwone3four\n" +
+    "4nineeightseven2\n" +
+    "zoneight234\n" +
+    "7pqrstsixteen\n"
+) 
+
 @(test)
 test_example_d01_p2 :: proc(t: ^testing.T) {
-	input := strings.join(
-		 {
-			"two1nine",
-			"eightwothree",
-			"abcone2threexyz",
-			"xtwone3four",
-			"4nineeightseven2",
-			"zoneight234",
-			"7pqrstsixteen",
-		},
-		"\n",
-	);defer delete(input)
-
-	_, part2 := day01(input)
+	_, part2 := day01(test_input_p2)
 	part2_expected := int(281)
 	testing.expect(
 		t,

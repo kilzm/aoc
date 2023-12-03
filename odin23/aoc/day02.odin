@@ -9,9 +9,9 @@ import "core:unicode/utf8"
 
 day02 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	content := input[:]
+	it := input[:]
 	linenr: int
-	for line in strings.split_lines_iterator(&content) {
+	for line in strings.split_lines_iterator(&it) {
 		game := line[strings.index(line, ":") + 2:]
 		if check_game(game) do part1 += linenr + 1
 		part2 += get_power_for_game(game)
@@ -22,13 +22,13 @@ day02 :: proc(input: string) -> (result_t, result_t) {
 
 @(private = "file")
 check_game :: proc(game: string) -> bool {
-	samples := game[:]
-	for s in strings.split_iterator(&samples, "; ") {
-		sample := s[:]
-		for color_sample in strings.split_iterator(&sample, ", ") {
-			space := strings.index(color_sample, " ")
-			amount := strconv.atoi(color_sample[:space])
-			color := color_sample[space + 1]
+	it := game[:]
+	for sample in strings.split_iterator(&it, "; ") {
+        sample_it := sample[:]
+		for color_sample in strings.split_iterator(&sample_it, ", ") {
+            a, _, c := strings.partition(color_sample, " ")
+			amount := strconv.atoi(a)
+            color := c[0]
 			if (color == 'r' && amount > 12 ||
 				   color == 'g' && amount > 13 ||
 				   color == 'b' && amount > 14) {
@@ -42,10 +42,10 @@ check_game :: proc(game: string) -> bool {
 @(private = "file")
 get_power_for_game :: proc(game: string) -> int {
 	red, green, blue: int
-	samples := game[:]
-	for s in strings.split_iterator(&samples, "; ") {
-		sample := s[:]
-		for color_sample in strings.split_iterator(&sample, ", ") {
+	it := game[:]
+	for sample in strings.split_iterator(&it, "; ") {
+		sample_it := sample[:]
+		for color_sample in strings.split_iterator(&sample_it, ", ") {
 			space := strings.index(color_sample, " ")
 			amount := strconv.atoi(color_sample[:space])
 			color := color_sample[space + 1]
@@ -62,20 +62,18 @@ get_power_for_game :: proc(game: string) -> int {
 	return red * green * blue
 }
 
+@(private = "file")
+test_input :: (
+    "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" +
+    "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\n" +
+    "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\n" +
+    "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +
+    "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
+)
+
 @(test)
 test_example_d02_p1 :: proc(t: ^testing.T) {
-	input := strings.join(
-		 {
-			"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
-			"Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue",
-			"Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
-			"Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
-			"Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
-		},
-		"\n",
-	);defer delete(input)
-
-	part1, _ := day02(input)
+	part1, _ := day02(test_input)
 	part1_expected := int(8)
 	testing.expect(
 		t,
@@ -86,18 +84,8 @@ test_example_d02_p1 :: proc(t: ^testing.T) {
 
 @(test)
 test_example_d02_p2 :: proc(t: ^testing.T) {
-	input := strings.join(
-		 {
-			"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
-			"Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue",
-			"Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
-			"Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
-			"Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
-		},
-		"\n",
-	);defer delete(input)
 
-	_, part2 := day02(input)
+	_, part2 := day02(test_input)
 	part2_expected := int(2286)
 	testing.expect(
 		t,

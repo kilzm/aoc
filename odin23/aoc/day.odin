@@ -12,7 +12,7 @@ dayXX :: proc(content: string) -> (result_t, result_t) {
 
 // @test
 test_example_dXX_p1 :: proc(t: ^testing.T) {
-	input := strings.join({""}, "\n");defer delete(input)
+	input :: ""
 
 	part1, _ := dayXX(input)
 	part1_expected := int(0)
@@ -25,7 +25,7 @@ test_example_dXX_p1 :: proc(t: ^testing.T) {
 
 // @test
 test_example_dXX_p2 :: proc(t: ^testing.T) {
-	input := strings.join({""}, "\n");defer delete(input)
+    input :: ""
 
 	_, part2 := dayXX(input)
 	part2_expected := int(0)

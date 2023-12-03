@@ -7,11 +7,10 @@ import "core:testing"
 import "core:unicode"
 import "core:unicode/utf8"
 
-day01 :: proc(content: string) -> (result_t, result_t) {
+day01 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	lines := strings.split_lines(content)
-	defer delete(lines)
-	for line in lines {
+	content := input[:]
+	for line in strings.split_lines_iterator(&content) {
 		part1 += get_calibration_value(line)
 		part2 += get_actual_calibration_value(line)
 	}
@@ -39,7 +38,6 @@ get_calibration_value :: proc(line: string) -> int {
 @(private = "file")
 get_actual_calibration_value :: proc(line: string) -> int {
 	spelled :: []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
-
 	get_first_digit :: proc(line: string) -> int {
 		for i := 0; i < len(line); i += 1 {
 			substr := line[i:]
@@ -54,7 +52,6 @@ get_actual_calibration_value :: proc(line: string) -> int {
 		}
 		return 0
 	}
-
 	get_last_digit :: proc(line: string) -> int {
 		for i := len(line); i > 0; i -= 1 {
 			substr := line[:i]
@@ -70,7 +67,6 @@ get_actual_calibration_value :: proc(line: string) -> int {
 		return 0
 
 	}
-
 	return get_first_digit(line) * 10 + get_last_digit(line)
 }
 

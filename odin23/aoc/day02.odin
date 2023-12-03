@@ -7,26 +7,28 @@ import "core:strings"
 import "core:testing"
 import "core:unicode/utf8"
 
-day02 :: proc(content: string) -> (result_t, result_t) {
+day02 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	lines := strings.split(content, "\n");defer delete(lines)
-	for line, i in lines[:len(lines) - 1] {
-		sample_strs := strings.split(line[strings.index(line, ":") + 2:], "; ")
-		defer delete(sample_strs)
-		if check_game(sample_strs) do part1 += i + 1
-		part2 += get_power_for_game(sample_strs)
+	content := input[:]
+	linenr: int
+	for line in strings.split_lines_iterator(&content) {
+		game := line[strings.index(line, ":") + 2:]
+		if check_game(game) do part1 += linenr + 1
+		part2 += get_power_for_game(game)
+		linenr += 1
 	}
 	return part1, part2
 }
 
 @(private = "file")
-check_game :: proc(samples: []string) -> bool {
-	for sample in samples {
-		csamples := strings.split(sample, ", ");defer delete(csamples)
-		for csample in csamples {
-			split := strings.split(csample, " ");defer delete(split)
-			color := split[1][0]
-			amount := strconv.atoi(split[0])
+check_game :: proc(game: string) -> bool {
+	samples := game[:]
+	for s in strings.split_iterator(&samples, "; ") {
+		sample := s[:]
+		for color_sample in strings.split_iterator(&sample, ", ") {
+			space := strings.index(color_sample, " ")
+			amount := strconv.atoi(color_sample[:space])
+			color := color_sample[space + 1]
 			if (color == 'r' && amount > 12 ||
 				   color == 'g' && amount > 13 ||
 				   color == 'b' && amount > 14) {
@@ -38,14 +40,15 @@ check_game :: proc(samples: []string) -> bool {
 }
 
 @(private = "file")
-get_power_for_game :: proc(samples: []string) -> int {
+get_power_for_game :: proc(game: string) -> int {
 	red, green, blue: int
-	for sample in samples {
-		csamples := strings.split(sample, ", ");defer delete(csamples)
-		for csample in csamples {
-			split := strings.split(csample, " ");defer delete(split)
-			color := split[1][0]
-			amount := strconv.atoi(split[0])
+	samples := game[:]
+	for s in strings.split_iterator(&samples, "; ") {
+		sample := s[:]
+		for color_sample in strings.split_iterator(&sample, ", ") {
+			space := strings.index(color_sample, " ")
+			amount := strconv.atoi(color_sample[:space])
+			color := color_sample[space + 1]
 			switch color {
 			case 'r':
 				red = max(red, amount)
@@ -68,7 +71,6 @@ test_example_d02_p1 :: proc(t: ^testing.T) {
 			"Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
 			"Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
 			"Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
-			"",
 		},
 		"\n",
 	);defer delete(input)
@@ -91,7 +93,6 @@ test_example_d02_p2 :: proc(t: ^testing.T) {
 			"Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
 			"Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red",
 			"Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
-			"",
 		},
 		"\n",
 	);defer delete(input)

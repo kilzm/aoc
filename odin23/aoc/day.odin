@@ -10,11 +10,11 @@ dayXX :: proc(content: string) -> (result_t, result_t) {
 }
 
 
-// @test
-test_example_dXX_p1 :: proc(t: ^testing.T) {
-	input :: ""
+test_input :: ""
 
-	part1, _ := dayXX(input)
+// @(test)
+test_example_dXX_p1 :: proc(t: ^testing.T) {
+	part1, _ := dayXX(test_input)
 	part1_expected := int(0)
 	testing.expect(
 		t,
@@ -23,11 +23,9 @@ test_example_dXX_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-// @test
+// @(test)
 test_example_dXX_p2 :: proc(t: ^testing.T) {
-    input :: ""
-
-	_, part2 := dayXX(input)
+	_, part2 := dayXX(test_input)
 	part2_expected := int(0)
 	testing.expect(
 		t,

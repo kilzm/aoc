@@ -1,11 +1,14 @@
 package aoc
 
 import "core:fmt"
-import "core:slice"
-import "core:strings"
 import "core:testing"
+import "core:time"
+import "core:strings"
 import "core:unicode"
 import "core:unicode/utf8"
+
+@(private = "file")
+DAY :: 1
 
 day01 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
@@ -65,7 +68,6 @@ get_actual_calibration_value :: proc(line: string) -> int  {
 			}
 		}
 		return 0
-
 	}
 	return get_first_digit(line) * 10 + get_last_digit(line)
 }
@@ -104,4 +106,17 @@ test_example_d01_p2 :: proc(t: ^testing.T) {
 		part2 == part2_expected,
 		fmt.tprintf("Expected %v, got %v", part2_expected, part2),
 	)
+}
+
+setup_day01 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
+    options.input = get_input(DAY)
+    return nil
+}
+
+bench_day01 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
+    for _ in 0..<options.rounds {
+        _, _ = day01(string(options.input))
+    }
+    options.count = options.rounds
+    return nil
 }

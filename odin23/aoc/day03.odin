@@ -1,10 +1,14 @@
 package aoc
 
 import "core:fmt"
-import "core:strings"
 import "core:testing"
+import "core:time"
+import "core:strings"
 import "core:unicode"
 import "core:strconv"
+
+@(private = "file")
+DAY :: 3
 
 Gear :: struct {
     nums: [2]int,
@@ -100,4 +104,17 @@ test_example_d03_p2 :: proc(t: ^testing.T) {
 		part2 == part2_expected,
 		fmt.tprintf("Expected %v, got %v", part2_expected, part2),
 	)
+}
+
+setup_day03 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
+    options.input = get_input(DAY)
+    return nil
+}
+
+bench_day03 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
+    for _ in 0..<options.rounds {
+        _, _ = day03(string(options.input))
+    }
+    options.count = options.rounds
+    return nil
 }

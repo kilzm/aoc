@@ -16,9 +16,9 @@ get_benchmarks :: proc(all_bench_procs: [NDAYS][2]bench_proc) -> (times: [NDAYS]
 			teardown = teardown,
 		}
 		time.benchmark(options)
-		microseconds := time.duration_microseconds(options.duration) / f64(options.count)
-		times[day] = microseconds
-		total += microseconds
+		milliseconds := time.duration_milliseconds(options.duration) / f64(options.count)
+		times[day] = milliseconds
+		total += milliseconds
 	}
 	return times, total
 }

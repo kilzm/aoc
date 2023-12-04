@@ -13,17 +13,18 @@ result_t :: union {
 	string,
 }
 
-NDAYS :: 3
+NDAYS :: 4
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
 main :: proc() {
-	days := [NDAYS]day_proc{day01, day02, day03}
+	days := [NDAYS]day_proc{day01, day02, day03, day04}
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
 		{setup_day01, bench_day01},
 		{setup_day02, bench_day02},
 		{setup_day03, bench_day03},
+		{setup_day04, bench_day04},
 	}
 
 	bench := parse_args()
@@ -31,7 +32,7 @@ main :: proc() {
 	if bench {
 		bench_times, total := get_benchmarks(all_bench_procs)
 		for procedure, day in days do run(day + 1, procedure, bench_times[day])
-		fmt.println("total |", total)
+		fmt.printf("total | %fms\n", total)
 	} else {
 		for procedure, day in days do run(day + 1, procedure)
 	}
@@ -71,7 +72,7 @@ run :: proc(day: int, procedure: day_proc, bench_time: f64 = -1) {
 	if (bench_time == -1) {
 		fmt.printf("day%02i\n", day)
 	} else {
-		fmt.printf("day%02i | %fus\n", day, bench_time)
+		fmt.printf("day%02i | %fms\n", day, bench_time)
 	}
 	fmt.printf("    part 1: %v\n", part1)
 	fmt.printf("    part 2: %v\n", part2)

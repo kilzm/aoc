@@ -1,9 +1,9 @@
 package aoc
 
 import "core:fmt"
+import "core:strings"
 import "core:testing"
 import "core:time"
-import "core:strings"
 import "core:unicode"
 import "core:unicode/utf8"
 
@@ -39,11 +39,11 @@ get_calibration_value :: proc(line: string) -> int {
 }
 
 @(private = "file")
-get_actual_calibration_value :: proc(line: string) -> int  {
+get_actual_calibration_value :: proc(line: string) -> int {
 	spelled :: []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 	get_first_digit :: proc(line: string) -> int {
 		for i := 0; i < len(line); i += 1 {
-            substr := line[i:]
+			substr := line[i:]
 			if c := utf8.rune_at(substr, 0); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
@@ -73,8 +73,7 @@ get_actual_calibration_value :: proc(line: string) -> int  {
 }
 
 @(private = "file")
-test_input_p1 :: 
-`pqr3stu8vwx
+test_input_p1 :: `pqr3stu8vwx
 1abc2
 a1b2c3d4e5f
 treb7uchet`
@@ -91,15 +90,13 @@ test_example_d01_p1 :: proc(t: ^testing.T) {
 }
 
 @(private = "file")
-test_input_p2 :: 
-`two1nine
+test_input_p2 :: `two1nine
 eightwothree
 abcone2threextz
 xtwone3four
 4nineeightseven2
 zoneight234
 7pqrstsixteen`
-
 
 
 @(test)
@@ -113,15 +110,21 @@ test_example_d01_p2 :: proc(t: ^testing.T) {
 	)
 }
 
-setup_day01 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
-    options.input = get_input(DAY)
-    return nil
+setup_day01 :: proc(
+	options: ^time.Benchmark_Options,
+	allocator := context.allocator,
+) -> time.Benchmark_Error {
+	options.input = get_input(DAY)
+	return nil
 }
 
-bench_day01 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
-    for _ in 0..<options.rounds {
-        _, _ = day01(string(options.input))
-    }
-    options.count = options.rounds
-    return nil
+bench_day01 :: proc(
+	options: ^time.Benchmark_Options,
+	allocator := context.allocator,
+) -> time.Benchmark_Error {
+	for _ in 0 ..< options.rounds {
+		_, _ = day01(string(options.input))
+	}
+	options.count = options.rounds
+	return nil
 }

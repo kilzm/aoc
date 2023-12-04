@@ -1,10 +1,10 @@
 package aoc
 
 import "core:fmt"
+import "core:strconv"
+import "core:strings"
 import "core:testing"
 import "core:time"
-import "core:strings"
-import "core:strconv"
 import "core:unicode/utf8"
 
 @(private = "file")
@@ -27,11 +27,11 @@ day02 :: proc(input: string) -> (result_t, result_t) {
 check_game :: proc(game: string) -> bool {
 	it := game[:]
 	for sample in strings.split_iterator(&it, "; ") {
-        sample_it := sample[:]
+		sample_it := sample[:]
 		for color_sample in strings.split_iterator(&sample_it, ", ") {
-            a, _, c := strings.partition(color_sample, " ")
+			a, _, c := strings.partition(color_sample, " ")
 			amount := strconv.atoi(a)
-            color := c[0]
+			color := c[0]
 			if (color == 'r' && amount > 12 ||
 				   color == 'g' && amount > 13 ||
 				   color == 'b' && amount > 14) {
@@ -66,8 +66,7 @@ get_power_for_game :: proc(game: string) -> int {
 }
 
 @(private = "file")
-test_input ::
-`Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+test_input :: `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
@@ -96,15 +95,21 @@ test_example_d02_p2 :: proc(t: ^testing.T) {
 	)
 }
 
-setup_day02 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
-    options.input = get_input(DAY)
-    return nil
+setup_day02 :: proc(
+	options: ^time.Benchmark_Options,
+	allocator := context.allocator,
+) -> time.Benchmark_Error {
+	options.input = get_input(DAY)
+	return nil
 }
 
-bench_day02 :: proc(options: ^time.Benchmark_Options, allocator := context.allocator) -> time.Benchmark_Error {
-    for _ in 0..<options.rounds {
-        _, _ = day02(string(options.input))
-    }
-    options.count = options.rounds
-    return nil
+bench_day02 :: proc(
+	options: ^time.Benchmark_Options,
+	allocator := context.allocator,
+) -> time.Benchmark_Error {
+	for _ in 0 ..< options.rounds {
+		_, _ = day02(string(options.input))
+	}
+	options.count = options.rounds
+	return nil
 }

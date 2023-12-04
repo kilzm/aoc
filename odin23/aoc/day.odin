@@ -13,7 +13,8 @@ dayXX :: proc(content: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-test_input :: ""
+test_input ::
+``
 
 // @(test)
 test_example_dXX_p1 :: proc(t: ^testing.T) {

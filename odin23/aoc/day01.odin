@@ -73,7 +73,11 @@ get_actual_calibration_value :: proc(line: string) -> int  {
 }
 
 @(private = "file")
-test_input_p1 :: "1abc2\n" + "a1b2c3d4e5f\n" + "pqr3stu8vwx\n" + "treb7uch"
+test_input_p1 :: 
+`pqr3stu8vwx
+1abc2
+a1b2c3d4e5f
+treb7uchet`
 
 @(test)
 test_example_d01_p1 :: proc(t: ^testing.T) {
@@ -87,15 +91,16 @@ test_example_d01_p1 :: proc(t: ^testing.T) {
 }
 
 @(private = "file")
-test_input_p2 :: (
-    "two1nine\n" +
-    "eightwothree\n" +
-    "abcone2threexyz\n" +
-    "xtwone3four\n" +
-    "4nineeightseven2\n" +
-    "zoneight234\n" +
-    "7pqrstsixteen\n"
-) 
+test_input_p2 :: 
+`two1nine
+eightwothree
+abcone2threextz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen`
+
+
 
 @(test)
 test_example_d01_p2 :: proc(t: ^testing.T) {

@@ -1,20 +1,20 @@
 package aoc
 
 import "core:fmt"
+import "core:strings"
 import "core:testing"
 import "core:time"
-import "core:strings"
 
 @(private = "file")
 DAY :: 0
 
-dayXX :: proc(content: string) -> (result_t, result_t) {
+dayXX :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	return part1, part2
 }
 
-test_input ::
-``
+@(private = "file")
+test_input :: ``
 
 // @(test)
 test_example_dXX_p1 :: proc(t: ^testing.T) {

@@ -10,21 +10,23 @@ import "core:time"
 result_t :: union {
 	int,
 	u64,
+    i64,
 	string,
 }
 
-NDAYS :: 4
+NDAYS :: 5
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
 main :: proc() {
-	days := [NDAYS]day_proc{day01, day02, day03, day04}
+	days := [NDAYS]day_proc{day01, day02, day03, day04, day05}
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
 		{setup_day01, bench_day01},
 		{setup_day02, bench_day02},
 		{setup_day03, bench_day03},
 		{setup_day04, bench_day04},
+		{setup_day05, bench_day05},
 	}
 
 	bench := parse_args()

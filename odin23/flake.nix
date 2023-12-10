@@ -5,8 +5,24 @@
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
+    let
+      overlays = [
+        (final: prev: {
+          odin = prev.odin.overrideAttrs(old: {
+            version = "dev-2023-12";
+            src = old.src.override {
+              hash = "sha256-5plcr+j9aFSaLfLQXbG4WD1GH6rE7D3uhlUbPaDEYf8=";
+            };
+          });
+         })
+      ];
+    in
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system}; in
+      let 
+        pkgs = import nixpkgs {
+          inherit system overlays; 
+        };
+      in
       {
         devShells = {
           default = pkgs.mkShell {

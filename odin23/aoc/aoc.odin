@@ -14,12 +14,15 @@ result_t :: union {
 	string,
 }
 
-NDAYS :: 6
+NDAYS :: 9
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
 main :: proc() {
-	days := [NDAYS]day_proc{day01, day02, day03, day04, day05, day06}
+	days := [NDAYS]day_proc{
+        day01, day02, day03, day04, day05, day06,
+        day07, day08, day09
+    }
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
 		{setup_day01, bench_day01},
@@ -28,6 +31,9 @@ main :: proc() {
 		{setup_day04, bench_day04},
 		{setup_day05, bench_day05},
 		{setup_day06, bench_day06},
+		{setup_day07, bench_day07},
+		{setup_day08, bench_day08},
+		{setup_day09, bench_day09},
 	}
 
 	bench := parse_args()

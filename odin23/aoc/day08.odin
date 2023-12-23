@@ -9,38 +9,32 @@ import "core:time"
 @(private = "file")
 DAY :: 8
 
-@(private = "file")
-Destinations :: struct {
-	left, right: u32,
-}
-
 day08 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	instructions, network, starts := parse_input(input)
 	defer {
-		delete(instructions)
 		delete(network)
 		delete(starts)
+        delete(instructions)
 	}
 	part1 = solve_p1(instructions, network)
-	part2 = solve_p2(instructions, network, starts)
+    part2 = solve_p2(instructions, network, starts)
 	return part1, part2
 }
 
 @(private = "file")
-solve_p1 :: proc(instructions: []bool, network: map[u32]Destinations) -> (steps: int) {
+solve_p1 :: proc(instructions: []u8, network: []u32) -> (steps: int) {
 	n_instructions := len(instructions)
-	AAA := convert_location("AAA")
-	ZZZ := convert_location("ZZZ")
+	AAA := encode("AAA")
+	ZZZ := encode("ZZZ")
 	location := AAA
+    ci: int
 	for {
-		go_left := instructions[steps %% n_instructions]
-		if go_left {
-			location = network[location].left
-		} else {
-			location = network[location].right
-		}
+        if ci >= n_instructions do ci = 0
+		instr := instructions[ci]
+        location = network[location] >> 16 if instr == 'L' else network[location] & 0xFFFF
 		steps += 1
+        ci += 1
 		if location == ZZZ do break
 	}
 	return
@@ -48,48 +42,31 @@ solve_p1 :: proc(instructions: []bool, network: map[u32]Destinations) -> (steps:
 
 @(private = "file")
 solve_p2 :: proc(
-	instructions: []bool,
-	network: map[u32]Destinations,
+	instructions: []u8,
+	network: []u32,
 	starts: []u32,
 ) -> (
-	steps: int,
+	steps: int = 1,
 ) {
 	n_instructions := len(instructions)
-	path_lens: [dynamic]int
-	defer delete(path_lens)
-	START :: u32(1 << 31)
-	END :: u32(1 << 30)
 	for location in starts {
 		csteps: int
 		clocation := location
 		for {
-			go_left := instructions[csteps %% n_instructions]
-			if go_left {
-				clocation = network[clocation].left
-			} else {
-				clocation = network[clocation].right
-			}
+			instr := instructions[csteps %% n_instructions]
+			clocation = network[clocation] >> 16 if instr == 'L' else network[clocation] & 0xFFFF
 			csteps += 1
-			if clocation & END != 0 do break
+			if clocation & 0b11111 == u32('Z' - 'A') do break
 		}
-		append(&path_lens, csteps)
-	}
-	steps = path_lens[0]
-	for path_len in path_lens {
-		steps = math.lcm(steps, path_len)
+        steps = math.lcm(steps, csteps)
 	}
 	return
 }
 
 @(private = "file")
-convert_location :: proc(location: string) -> (value: u32) {
+encode :: proc(location: string) -> (value: u32) {
 	loc := transmute([]u8)location
-	for c, i in loc do value += u32(c - 'A') * u32(ipow(26, u32(2 - i)))
-	if loc[2] == 'A' {
-		value |= 1 << 31
-	} else if loc[2] == 'Z' {
-		value |= 1 << 30
-	}
+	value |= u32(loc[0] - 'A') << 10 | u32(loc[1] - 'A') << 5 | u32(loc[2] - 'A')
 	return
 }
 
@@ -97,22 +74,20 @@ convert_location :: proc(location: string) -> (value: u32) {
 parse_input :: proc(
 	input: string,
 ) -> (
-	instructions: []bool,
-	network: map[u32]Destinations,
+	instructions: []u8,
+	network: []u32,
 	starts_: []u32,
 ) {
 	lines := strings.split_lines(input)
 	defer delete(lines)
+    instructions = make([]u8, len(lines[0]))
+    copy(instructions, lines[0])
 	starts := make([dynamic]u32)
-	instructions = make([]bool, len(lines[0]))
-	for instruction, i in lines[0] do instructions[i] = instruction == 'L'
+	network = make([]u32, 0b11001_11001_11001 + 1)
 	for line in lines[2:len(lines) - 1] {
-		from := convert_location(line[:3])
-		network[from] = Destinations {
-			left  = convert_location(line[7:10]),
-			right = convert_location(line[12:15]),
-		}
-		if from & (1 << 31) != 0 do append(&starts, from)
+		from, left, right := encode(line[:3]), encode(line[7:10]), encode(line[12:15])
+		network[from] = left << 16 | right
+		if line[2] == 'A' do append(&starts, from)
 	}
 	starts_ = starts[:]
 	return
@@ -145,13 +120,13 @@ test_example_d08_p1 :: proc(t: ^testing.T) {
 @(private = "file")
 test_input_p2 :: `LR
 
-11A = (11B, XXX)
-11B = (XXX, 11Z)
-11Z = (11B, XXX)
-22A = (22B, XXX)
-22B = (22C, 22C)
-22C = (22Z, 22Z)
-22Z = (22B, 22B)
+GGA = (GGB, XXX
+GGB = (XXX, GGZ)
+GGZ = (GGB, XXX)
+HHA = (HHB, XXX)
+HHB = (HHC, HHC)
+HHC = (HHZ, HHZ)
+HHZ = (HHB, HHB)
 XXX = (XXX, XXX)
 `
 

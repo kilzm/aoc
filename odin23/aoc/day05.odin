@@ -2,10 +2,7 @@ package aoc
 
 import "core:fmt"
 import "core:math/bits"
-import "core:mem"
 import "core:slice"
-import "core:sort"
-import "core:strconv"
 import "core:strings"
 import "core:testing"
 import "core:time"

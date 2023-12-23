@@ -47,9 +47,9 @@ get_actual_calibration_value :: proc(line: string) -> int {
 			if c := utf8.rune_at(substr, 0); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
-			for sp, i in spelled {
+			for sp, j in spelled {
 				if strings.has_prefix(substr, sp) {
-					return i + 1
+					return j + 1
 				}
 			}
 		}
@@ -61,9 +61,9 @@ get_actual_calibration_value :: proc(line: string) -> int {
 			if c := utf8.rune_at(substr, i - 1); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
-			for sp, i in spelled {
+			for sp, j in spelled {
 				if strings.has_suffix(substr, sp) {
-					return i + 1
+					return j + 1
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 package aoc
 
 import "core:fmt"
-import "core:math"
 import "core:slice"
 import "core:strconv"
 import "core:strings"

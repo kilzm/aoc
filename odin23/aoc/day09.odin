@@ -44,7 +44,6 @@ day09 :: proc(input: string) -> (result_t, result_t) {
 
 @(private = "file")
 parse_input :: proc(input: string) -> (seqs: [dynamic][]int, seqlen: int) {
-	it := input[:]
 	lines := strings.split_lines(input)
 	defer delete(lines)
 	seqlen = slice.count(transmute([]u8)lines[0], ' ') + 1

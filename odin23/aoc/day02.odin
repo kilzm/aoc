@@ -5,7 +5,6 @@ import "core:strconv"
 import "core:strings"
 import "core:testing"
 import "core:time"
-import "core:unicode/utf8"
 
 @(private = "file")
 DAY :: 2

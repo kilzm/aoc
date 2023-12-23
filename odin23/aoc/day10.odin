@@ -25,7 +25,6 @@ offsets :: [4]Offset{UP, RIGHT, DOWN, LEFT}
 
 day10 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	it := input[:]
 	lines := strings.split_lines(input)
 	lines = lines[:len(lines) - 1]
 	R, C := len(lines), len(lines[0])
@@ -77,11 +76,10 @@ day10 :: proc(input: string) -> (result_t, result_t) {
 	defer delete(stack)
 	append(&stack, Offset{0, 0})
 	for len(stack) != 0 {
-		pos := pop(&stack)
-		r, c := pos[0], pos[1]
+		tpos := pop(&stack)
+		r, c := tpos[0], tpos[1]
 		gi := C3 * r + c
 		if grid3[gi] == '#' || grid3[gi] == 'O' do continue
-		or, oc := r / 3, c / 3
 		outside[C * (r / 3) + (c / 3)] = true
 		grid3[gi] = 'O'
 		for offset in offsets {
@@ -116,10 +114,9 @@ find_start_tile_and_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (tile: u8
 		return 'F', DOWN
 	case 0b0011:
 		return 'L', RIGHT
-	case 0b1001:
+	case:
 		return 'J', LEFT
 	}
-	return
 }
 
 @(private = "file")
@@ -203,7 +200,7 @@ L7JLJL-JLJLJL--JLJ.L
 @(test)
 test_example_d10_p2 :: proc(t: ^testing.T) {
 	_, part2 := day10(test_input_p2)
-	part2_expected := int(0)
+	part2_expected := int(10)
 	testing.expect(
 		t,
 		part2 == part2_expected,

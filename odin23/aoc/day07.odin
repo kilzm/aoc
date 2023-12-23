@@ -1,6 +1,5 @@
 package aoc
 
-import "core:c/libc"
 import "core:fmt"
 import "core:slice"
 import "core:strconv"
@@ -56,23 +55,22 @@ day07 :: proc(input: string) -> (result_t, result_t) {
 
 @(private = "file")
 evaluate_hand :: proc(hand: string) -> (eval: u32) {
-    card_strength :: proc(card: byte) -> int {
-        switch card {
-        case 'A':
-            return 12
-        case 'K':
-            return 11
-        case 'Q':
-            return 10
-        case 'J':
-            return 9
-        case 'T':
-            return 8
-        case:
-            return int(card - '0' - 2)
-        }
-    }
-
+	card_strength :: proc(card: byte) -> int {
+		switch card {
+		case 'A':
+			return 12
+		case 'K':
+			return 11
+		case 'Q':
+			return 10
+		case 'J':
+			return 9
+		case 'T':
+			return 8
+		case:
+			return int(card - '0' - 2)
+		}
+	}
 	amounts: [13]u8
 	for i in 0 ..< len(hand) {
 		strength := card_strength(hand[i])

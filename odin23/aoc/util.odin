@@ -1,6 +1,7 @@
 package aoc
 
 import "core:strconv"
+import "core:fmt"
 
 rune_to_int :: proc(c: rune) -> int {
 	return int(c) - 48
@@ -31,4 +32,11 @@ ipow :: proc(base: int, exp: u32) -> (res: int) {
 		base_ *= base_
 	}
 	return
+}
+
+print_char_grid :: proc(grid: [][]u8) {
+    for row in grid {
+        fmt.println(transmute(string)row)
+    }
+    fmt.println()
 }

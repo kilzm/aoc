@@ -1,28 +1,36 @@
 package aoc
 
 import "core:fmt"
-import "core:mem"
-import "core:mem/virtual"
 import "core:os"
 import "core:strings"
-import "core:time"
 
 result_t :: union {
 	int,
 	u64,
-    i64,
+	i64,
 	string,
 }
 
-NDAYS :: 11
+NDAYS :: 13
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
 main :: proc() {
-	days := [NDAYS]day_proc{
-        day01, day02, day03, day04, day05, day06,
-        day07, day08, day09, day10, day11
-    }
+	days := [NDAYS]day_proc {
+		day01,
+		day02,
+		day03,
+		day04,
+		day05,
+		day06,
+		day07,
+		day08,
+		day09,
+		day10,
+		day11,
+		day12,
+		day13,
+	}
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
 		{setup_day01, bench_day01},
@@ -36,6 +44,8 @@ main :: proc() {
 		{setup_day09, bench_day09},
 		{setup_day10, bench_day10},
 		{setup_day11, bench_day11},
+		{setup_day12, bench_day12},
+		{setup_day13, bench_day13},
 	}
 
 	bench := parse_args()

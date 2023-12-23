@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   ];
 
   buildPhase = ''
-    odin build aoc -out:aoc2023 -o:speed
+    odin build aoc -out:aoc2023 -o:aggressive -no-bounds-check
   '';
 
   installPhase = ''

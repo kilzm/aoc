@@ -8,12 +8,15 @@
     let
       overlays = [
         (final: prev: {
-          odin = prev.odin.overrideAttrs(old: {
-            version = "dev-2023-12";
+          odin = (prev.odin.overrideAttrs(old: {
+            version = "034aead9301305d41756ef3b5b9b60a88c95d825";
             src = old.src.override {
-              hash = "sha256-5plcr+j9aFSaLfLQXbG4WD1GH6rE7D3uhlUbPaDEYf8=";
+              rev = "034aead9301305d41756ef3b5b9b60a88c95d825";
+              hash = "sha256-okfcOlajq+r3oHH9zRHqaND4kIq3LWKYfEK7WTaI8hk=";
             };
-          });
+          })).override {
+            llvmPackages_13 = prev.llvmPackages_17;
+          };
          })
       ];
     in

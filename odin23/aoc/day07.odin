@@ -12,9 +12,9 @@ DAY :: 7
 
 @(private = "file")
 Hand :: struct {
-	bid:    int,
-	power:  u32,
-	jpower: u32,
+	bid:   int,
+	eval:  u32,
+	evalj: u32,
 }
 
 @(private = "file")
@@ -35,116 +35,105 @@ day07 :: proc(input: string) -> (result_t, result_t) {
 	defer delete(hands)
 	for line in strings.split_lines_iterator(&it) {
 		hand, _, bid := strings.partition(line, " ")
-		power := evaluate_hand(hand)
+		eval, evalj := evaluate_hand(hand)
 		append(
 			&hands,
 			Hand {
 				bid = strconv.atoi(bid),
-				power = evaluate_hand(hand),
-				jpower = evaluate_hand_joker(hand),
+				eval = eval,
+				evalj = evalj,
 			},
 		)
 	}
 	hands_sl := hands[:]
-	slice.sort_by(hands_sl, proc(a, b: Hand) -> bool {return a.power < b.power})
+	slice.sort_by(hands_sl, proc(a, b: Hand) -> bool {return a.eval < b.eval})
 	for hand, i in hands_sl do part1 += hand.bid * (i + 1)
-	slice.sort_by(hands_sl, proc(a, b: Hand) -> bool {return a.jpower < b.jpower})
+
+	slice.sort_by(hands_sl, proc(a, b: Hand) -> bool {return a.evalj < b.evalj})
 	for hand, i in hands_sl do part2 += hand.bid * (i + 1)
 	return part1, part2
 }
 
 @(private = "file")
-evaluate_hand :: proc(hand: string) -> (eval: u32) {
-	card_strength :: proc(card: byte) -> int {
-		switch card {
-		case 'A':
-			return 12
-		case 'K':
-			return 11
-		case 'Q':
-			return 10
-		case 'J':
-			return 9
-		case 'T':
-			return 8
-		case:
-			return int(card - '0' - 2)
-		}
-	}
-	amounts: [13]u8
-	for i in 0 ..< len(hand) {
-		strength := card_strength(hand[i])
-		eval += u32(strength * ipow(13, u32(4 - i)))
-		amounts[strength] += 1
-	}
-	max, smax := maximum_two(amounts[:])
-	switch max {
-	case 5:
-		eval |= u32(HandType.FIVE)
-	case 4:
-		eval |= u32(HandType.FOUR)
-	case 3:
-		eval |= smax == 2 ? u32(HandType.FULLHOUSE) : u32(HandType.THREE)
-	case 2:
-		eval |= smax == 2 ? u32(HandType.TWOPAIR) : u32(HandType.ONEPAIR)
-	case:
-		eval |= u32(HandType.HIGH)
-	}
-	return
-}
-
-evaluate_hand_joker :: proc(hand: string) -> (eval: u32) {
-	card_strength_joker :: proc(card: byte) -> int {
-		switch card {
-		case 'A':
-			return 12
-		case 'K':
-			return 11
-		case 'Q':
-			return 10
-		case 'T':
-			return 9
-		case 'J':
-			return 0
-		case:
-			return int(card - '0' - 1)
-		}
-	}
-
-	amounts: [13]u8
-	for i in 0 ..< len(hand) {
-		strength := card_strength_joker(hand[i])
-		eval += u32(strength * ipow(13, u32(4 - i)))
-		amounts[strength] += 1
-	}
-	max, smax := maximum_two(amounts[1:])
-	jokers := amounts[0]
-
-	switch max + jokers {
-	case 5:
-		eval |= u32(HandType.FIVE)
-	case 4:
-		eval |= u32(HandType.FOUR)
-	case 3:
-		eval |= smax == 2 ? u32(HandType.FULLHOUSE) : u32(HandType.THREE)
-	case 2:
-		eval |= smax == 2 ? u32(HandType.TWOPAIR) : u32(HandType.ONEPAIR)
-	case:
-		eval |= u32(HandType.HIGH)
-	}
-	return
+maximum_two :: proc(amounts: []u8) -> (max, smax: u8) {
+    for n in amounts {
+        if n > max {
+            smax = max
+            max = n
+        } else if n > smax {
+                smax = n
+            }
+    }
+    return
 }
 
 @(private = "file")
-maximum_two :: proc(amounts: []u8) -> (max, smax: u8) {
-	for n in amounts {
-		if n > max {
-			smax = max
-			max = n
-		} else if n > smax {
-			smax = n
-		}
+card_strength :: proc(card: byte) -> int {
+    switch card {
+    case 'A':
+        return 12
+    case 'K':
+        return 11
+    case 'Q':
+        return 10
+    case 'J':
+        return 9
+    case 'T':
+        return 8
+    case:
+        return int(card - '0' - 2)
+    }
+}
+
+@(private = "file")
+card_strength_joker :: proc(card: byte) -> int {
+    switch card {
+    case 'A':
+        return 12
+    case 'K':
+        return 11
+    case 'Q':
+        return 10
+    case 'T':
+        return 9
+    case 'J':
+        return 0
+    case:
+        return int(card - '0' - 1)
+    }
+}
+
+get_type :: proc(max, smax: u8) -> HandType {
+	switch max {
+	case 5:
+		return .FIVE
+	case 4:
+		return .FOUR
+	case 3:
+		return smax == 2 ? .FULLHOUSE : .THREE
+	case 2:
+		return smax == 2 ? .TWOPAIR : .ONEPAIR
+	case:
+		return .HIGH
 	}
+}
+
+@(private = "file")
+evaluate_hand :: proc(hand: string) -> (eval: u32, evalj: u32) {
+	amounts: [13]u8
+    powers := [5]int{1, 13, 169, 2197, 28561}
+	for i in 0 ..< 5 {
+		strength := card_strength(hand[i])
+        strengthj := card_strength_joker(hand[i])
+		eval += u32(strength * powers[4 - i])
+        evalj += u32(strengthj * powers[4 - i])
+		amounts[strengthj] += 1
+	}
+	max, smax := maximum_two(amounts[:])
+    maxj, smaxj := maximum_two(amounts[1:])
+    jokers := amounts[0]
+    eval |= u32(get_type(max, smax))
+    evalj |= u32(get_type(maxj + jokers, smaxj))
 	return
 }
 

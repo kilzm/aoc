@@ -28,76 +28,74 @@ day10 :: proc(input: string) -> (result_t, result_t) {
 	lines := strings.split_lines(input)
 	lines = lines[:len(lines) - 1]
 	R, C := len(lines), len(lines[0])
-	R3, C3 := R * 3, C * 3
 	grid := make([]u8, R * C)
-	grid3 := make([]u8, R3 * C3)
+	lgrid := make([]u8, R * C)
 	for line, i in lines do copy_from_string(grid[i * C:(i + 1) * C], line)
 	defer {
 		delete(lines)
 		delete(grid)
-		delete(grid3)
+		delete(lgrid)
 	}
 
-	found_start: bool
 	pos: Offset
-	for r in 0 ..< R {
+	outer: for r in 0 ..< R {
 		for c in 0 ..< C {
 			if grid[C * r + c] == 'S' {
 				pos = Offset{r, c}
-				found_start = true
-				break
+				break outer
 			}
 		}
-		if found_start do break
 	}
 
-	start_tile, dir := find_start_tile_and_dir(grid, pos, R, C)
+	dir := find_start_dir(grid, pos, R, C)
 
+	minr, maxr, minc, maxc := pos.x, pos.x, pos.y, pos.y
 	for {
+		index := pos.x * C + pos.y
+		lgrid[index] = grid[index]
 		pos += dir
-		r, c := pos[0], pos[1]
-		gi := C * r + c
+		if pos.x < minr {
+			minr = pos.x
+		} else if pos.x > maxr {
+			maxr = pos.x
+		}
+		if pos.y < minc {
+			minc = pos.y
+		} else if pos.y > maxc {
+			maxc = pos.y
+		}
+		gi := C * pos.x + pos.y
 		tile := grid[gi]
 		part1 += 1
 		dir = walk(dir, tile)
-		grid[gi] = '#'
 		if tile == 'S' do break
-		fill_grid3(grid3, C3, r, c, tile)
 	}
+
 	part1 /= 2
 
-	fill_grid3(grid3, C3, pos[0], pos[1], start_tile)
-
-	part2 = R * C
-	outside := make([]bool, R * C)
-	defer delete(outside)
-
-	stack := make([dynamic]Offset)
-	defer delete(stack)
-	append(&stack, Offset{0, 0})
-	for len(stack) != 0 {
-		tpos := pop(&stack)
-		r, c := tpos[0], tpos[1]
-		gi := C3 * r + c
-		if grid3[gi] == '#' || grid3[gi] == 'O' do continue
-		outside[C * (r / 3) + (c / 3)] = true
-		grid3[gi] = 'O'
-		for offset in offsets {
-			rr, cc := r + offset[0], c + offset[1]
-			if 0 <= rr && rr < R3 && 0 <= cc && cc < C3 do append(&stack, Offset{rr, cc})
+	for r in minr ..= maxr {
+		inside: bool
+		for c in minc ..= maxc {
+			switch lgrid[r * C + c] {
+			case '|', 'F', '7':
+				inside = !inside
+			case 0:
+				if inside {
+					part2 += 1
+				}
+			}
 		}
 	}
-	part2 -= slice.count(outside, true)
+
 	return part1, part2
 }
 
 @(private = "file")
-find_start_tile_and_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (tile: u8, dir: Offset) {
-	r, c := pos[0], pos[1]
+find_start_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (dir: Offset) {
 	connected: u8
 	reachable := [4][]u8{{'|', '7', 'F'}, {'-', '7', 'J'}, {'|', 'J', 'L'}, {'-', 'L', 'F'}}
 	for offset, i in offsets {
-		gi := C * (r + offset[0]) + c + offset[1]
+		gi := C * (pos.x + offset.x) + pos.y + offset.y
 		if gi < 0 || gi >= R * C do continue
 		if slice.contains(reachable[i], grid[gi]) {
 			connected |= 1 << u8(i)
@@ -105,17 +103,17 @@ find_start_tile_and_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (tile: u8
 	}
 	switch connected {
 	case 0b1010:
-		return '-', RIGHT
+		return RIGHT
 	case 0b0101:
-		return '|', DOWN
+		return DOWN
 	case 0b1100:
-		return '7', DOWN
+		return DOWN
 	case 0b0110:
-		return 'F', DOWN
+		return DOWN
 	case 0b0011:
-		return 'L', RIGHT
+		return RIGHT
 	case:
-		return 'J', LEFT
+		return LEFT
 	}
 }
 
@@ -123,45 +121,15 @@ find_start_tile_and_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (tile: u8
 walk :: proc(dir: Offset, tile: u8) -> Offset {
 	switch tile {
 	case 'F':
-		return dir[0] == -1 ? RIGHT : DOWN
+		return dir.x == -1 ? RIGHT : DOWN
 	case '7':
-		return dir[0] == -1 ? LEFT : DOWN
+		return dir.x == -1 ? LEFT : DOWN
 	case 'L':
-		return dir[0] == 1 ? RIGHT : UP
+		return dir.x == 1 ? RIGHT : UP
 	case 'J':
-		return dir[0] == 1 ? LEFT : UP
+		return dir.x == 1 ? LEFT : UP
 	case:
 		return dir
-	}
-}
-
-@(private = "file")
-fill_grid3 :: proc(grid3: []u8, C, r, c: int, tile: u8) {
-	E, P :: 0, '#'
-	I := [3][]u8{{E, P, E}, {E, P, E}, {E, P, E}}
-	D := [3][]u8{{E, E, E}, {P, P, P}, {E, E, E}}
-	L := [3][]u8{{E, P, E}, {E, P, P}, {E, E, E}}
-	J := [3][]u8{{E, P, E}, {P, P, E}, {E, E, E}}
-	F := [3][]u8{{E, E, E}, {E, P, P}, {E, P, E}}
-	S := [3][]u8{{E, E, E}, {P, P, E}, {E, P, E}}
-	tile3: [3][]u8
-	switch tile {
-	case '|':
-		tile3 = I
-	case '-':
-		tile3 = D
-	case 'L':
-		tile3 = L
-	case 'J':
-		tile3 = J
-	case 'F':
-		tile3 = F
-	case '7':
-		tile3 = S
-	}
-	start := C * (r * 3) + (3 * c)
-	for i in 0 ..< 3 {
-		copy(grid3[start + i * C:], tile3[i])
 	}
 }
 

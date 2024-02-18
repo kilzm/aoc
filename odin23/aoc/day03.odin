@@ -10,6 +10,7 @@ import "core:unicode"
 @(private = "file")
 DAY :: 3
 
+@(private = "file")
 Gear :: struct {
 	nums:   [2]int,
 	amount: int,
@@ -18,12 +19,12 @@ Gear :: struct {
 day03 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	schematic := strings.split_lines(input)
-	gears := make(map[int]Gear)
+	rows, cols := len(schematic) - 1, len(schematic[0])
+	gears := make([]Gear, rows * cols)
 	defer {
 		delete(schematic)
 		delete(gears)
 	}
-	nrows, ncols := len(schematic) - 1, len(schematic[0])
 	for line, row in schematic {
 		num_beg: int
 		on_num: bool
@@ -36,37 +37,37 @@ day03 :: proc(input: string) -> (result_t, result_t) {
 			} else if on_num {
 				on_num = false
 				is_parts_num: bool
-				#no_bounds_check num := strconv.atoi(line[num_beg:col])
+				num := strconv.atoi(line[num_beg:col])
 				for rr in row - 1 ..= row + 1 {
-					if rr < 0 || rr >= nrows do continue
+					if rr < 0 || rr >= rows do continue
 					for cc in num_beg - 1 ..= col {
-						within_bounds := 0 <= cc && cc < ncols
+						within_bounds := 0 <= cc && cc < cols
 						part_of_num := rr == row && num_beg <= cc && cc < col
 						if !within_bounds || part_of_num do continue
-						#no_bounds_check symbol := schematic[rr][cc]
+						symbol := schematic[rr][cc]
 						if symbol != '.' do is_parts_num = true
-						if symbol == '*' do update_gears(&gears, rr * nrows + cc, num)
+						if symbol == '*' do update_gears(&gears, rr * rows + cc, num)
 					}
 				}
 				if is_parts_num do part1 += num
 			}
 		}
 	}
-	for _, gear in gears {
-		if gear.amount == 2 do part2 += gear.nums[0] * gear.nums[1]
+	for gear in gears {
+		if gear.amount == 2 do part2 += gear.nums.x * gear.nums.y
 	}
 	return part1, part2
 }
 
 @(private = "file")
-update_gears :: proc(gears: ^map[int]Gear, index, num: int) {
+update_gears :: proc(gears: ^[]Gear, index, num: int) {
 	gear := &gears[index]
 	if &gears[index] == nil {
 		gears[index] = Gear{}
 		gear = &gears[index]
 	}
 	amount := gear.amount
-	if (gear.amount < 2) do gear.nums[amount] = num
+	if gear.amount < 2 do gear.nums[amount] = num
 	gear.amount += 1
 }
 

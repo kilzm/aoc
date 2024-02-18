@@ -10,55 +10,55 @@ DAY :: 15
 
 @(private = "file")
 Lens :: struct {
-    label: string,
-    focal: u8,
+	label: string,
+	focal: u8,
 }
 
 @(private = "file")
 Box :: struct {
-    lenses: [dynamic]Lens,
+	lenses: [dynamic]Lens,
 }
 
 day15 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: u64
-    it := input[:len(input) - 1]
-    boxes: [256]Box
-    defer for box in boxes do delete(box.lenses)
-    for step in strings.split_iterator(&it, ",") {
-        part1 += hash(step)
-        l := len(step)
-        is_remove := step[l - 1] == '-'
-        label := step[:l - 1] if is_remove else step[:l - 2]
-        index := hash(label)
-        if !is_remove {
-            focal := step[l - 1] - '0'
-            replaced: bool
-            for lens, i in boxes[index].lenses {
-                 if lens.label == label {
-                    boxes[index].lenses[i].focal = focal
-                    replaced = true
-                    break
-                }
-            }
-            if !replaced do append(&boxes[index].lenses, Lens {label, focal})
-        } else {
-            for lens, i  in boxes[index].lenses {
-                if lens.label == label do ordered_remove(&boxes[index].lenses, i)
-            }
-        }
-    }
-    for box, bi in boxes {
-        for lens, li  in box.lenses {
-            part2 += u64(bi + 1) * u64(li + 1) * u64(lens.focal)
-        }
-    }
+	it := input[:len(input) - 1]
+	boxes: [256]Box
+	defer for box in boxes do delete(box.lenses)
+	for step in strings.split_iterator(&it, ",") {
+		part1 += hash(step)
+		l := len(step)
+		is_remove := step[l - 1] == '-'
+		label := step[:l - 1] if is_remove else step[:l - 2]
+		index := hash(label)
+		if !is_remove {
+			focal := step[l - 1] - '0'
+			replaced: bool
+			for lens, i in boxes[index].lenses {
+				if lens.label == label {
+					boxes[index].lenses[i].focal = focal
+					replaced = true
+					break
+				}
+			}
+			if !replaced do append(&boxes[index].lenses, Lens{label, focal})
+		} else {
+			for lens, i in boxes[index].lenses {
+				if lens.label == label do ordered_remove(&boxes[index].lenses, i)
+			}
+		}
+	}
+	for box, bi in boxes {
+		for lens, li in box.lenses {
+			part2 += u64(bi + 1) * u64(li + 1) * u64(lens.focal)
+		}
+	}
 	return part1, part2
 }
 
 @(private = "file")
 hash :: proc(str: string) -> (hash: u64) {
-    for c in 0 ..< len(str) do hash = (hash + u64(str[c])) * 17 %% 256
-    return
+	for c in 0 ..< len(str) do hash = (hash + u64(str[c])) * 17 %% 256
+	return
 }
 
 @(private = "file")

@@ -15,10 +15,10 @@ day08 :: proc(input: string) -> (result_t, result_t) {
 	defer {
 		delete(network)
 		delete(starts)
-        delete(instructions)
+		delete(instructions)
 	}
 	part1 = solve_p1(instructions, network)
-    part2 = solve_p2(instructions, network, starts)
+	part2 = solve_p2(instructions, network, starts)
 	return part1, part2
 }
 
@@ -28,26 +28,20 @@ solve_p1 :: proc(instructions: []u8, network: []u32) -> (steps: int) {
 	AAA := encode("AAA")
 	ZZZ := encode("ZZZ")
 	location := AAA
-    ci: int
+	ci: int
 	for {
-        if ci >= n_instructions do ci = 0
+		if ci >= n_instructions do ci = 0
 		instr := instructions[ci]
-        location = network[location] >> 16 if instr == 'L' else network[location] & 0xFFFF
+		location = network[location] >> 16 if instr == 'L' else network[location] & 0xFFFF
 		steps += 1
-        ci += 1
+		ci += 1
 		if location == ZZZ do break
 	}
 	return
 }
 
 @(private = "file")
-solve_p2 :: proc(
-	instructions: []u8,
-	network: []u32,
-	starts: []u32,
-) -> (
-	steps: int = 1,
-) {
+solve_p2 :: proc(instructions: []u8, network: []u32, starts: []u32) -> (steps: int = 1) {
 	n_instructions := len(instructions)
 	for location in starts {
 		csteps: int
@@ -58,7 +52,7 @@ solve_p2 :: proc(
 			csteps += 1
 			if clocation & 0b11111 == u32('Z' - 'A') do break
 		}
-        steps = math.lcm(steps, csteps)
+		steps = math.lcm(steps, csteps)
 	}
 	return
 }
@@ -71,17 +65,11 @@ encode :: proc(location: string) -> (value: u32) {
 }
 
 @(private = "file")
-parse_input :: proc(
-	input: string,
-) -> (
-	instructions: []u8,
-	network: []u32,
-	starts_: []u32,
-) {
+parse_input :: proc(input: string) -> (instructions: []u8, network: []u32, starts_: []u32) {
 	lines := strings.split_lines(input)
 	defer delete(lines)
-    instructions = make([]u8, len(lines[0]))
-    copy(instructions, lines[0])
+	instructions = make([]u8, len(lines[0]))
+	copy(instructions, lines[0])
 	starts := make([dynamic]u32)
 	network = make([]u32, 0b11001_11001_11001 + 1)
 	for line in lines[2:len(lines) - 1] {

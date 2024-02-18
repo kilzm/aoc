@@ -70,75 +70,75 @@ cycle :: proc(rocks: []u8, rows, cols, nrocks: int) -> hash {
 
 @(private = "file")
 tilt_north :: proc(rocks: []u8, rows, cols: int) {
-    for c in 0 ..< cols {
-        stop, count := -1, 0
-        for r := 0; r < rows; r += 1 {
-            if rocks[r * cols + c] == 'O' {
-                rocks[r * cols + c] = '.'
-                count += 1
-            }
-            if rocks[r * cols + c] == '#' || r == rows - 1 {
-                for rr in stop + 1 ..< stop + count + 1 do rocks[rr * cols + c] = 'O'
-                count = 0
-                stop = r
-            }
-        }
-    }
+	for c in 0 ..< cols {
+		stop, count := -1, 0
+		for r := 0; r < rows; r += 1 {
+			if rocks[r * cols + c] == 'O' {
+				rocks[r * cols + c] = '.'
+				count += 1
+			}
+			if rocks[r * cols + c] == '#' || r == rows - 1 {
+				for rr in stop + 1 ..< stop + count + 1 do rocks[rr * cols + c] = 'O'
+				count = 0
+				stop = r
+			}
+		}
+	}
 }
 
 @(private = "file")
 tilt_south :: proc(rocks: []u8, rows, cols: int) {
-    for c in 0 ..< cols {
-        stop, count := rows, 0
-        for r := rows - 1; r >= 0; r -= 1 {
-            if rocks[r * cols + c] == 'O' {
-                rocks[r * cols + c] = '.'
-                count += 1
-            }
-            if rocks[r * cols + c] == '#' || r == 0 {
-                for rr := stop - 1; rr > stop - 1 - count; rr -= 1 do rocks[rr * cols + c] = 'O'
-                count = 0
-                stop = r
-            }
-        }
-    }
+	for c in 0 ..< cols {
+		stop, count := rows, 0
+		for r := rows - 1; r >= 0; r -= 1 {
+			if rocks[r * cols + c] == 'O' {
+				rocks[r * cols + c] = '.'
+				count += 1
+			}
+			if rocks[r * cols + c] == '#' || r == 0 {
+				for rr := stop - 1; rr > stop - 1 - count; rr -= 1 do rocks[rr * cols + c] = 'O'
+				count = 0
+				stop = r
+			}
+		}
+	}
 }
 
 
 @(private = "file")
 tilt_west :: proc(rocks: []u8, rows, cols: int) {
-    for r in 0 ..< rows {
-        stop, count := -1, 0
-        for c := 0; c < cols; c += 1 {
-            if rocks[r * cols + c] == 'O' {
-                rocks[r * cols + c] = '.'
-                count += 1
-            }
-            if rocks[r * cols + c] == '#' || c == cols - 1 {
-                for cc in stop + 1 ..< stop + count + 1 do rocks[r * cols + cc] = 'O'
-                count = 0
-                stop = c
-            }
+	for r in 0 ..< rows {
+		stop, count := -1, 0
+		for c := 0; c < cols; c += 1 {
+			if rocks[r * cols + c] == 'O' {
+				rocks[r * cols + c] = '.'
+				count += 1
+			}
+			if rocks[r * cols + c] == '#' || c == cols - 1 {
+				for cc in stop + 1 ..< stop + count + 1 do rocks[r * cols + cc] = 'O'
+				count = 0
+				stop = c
+			}
 
-        }
-    }
+		}
+	}
 }
 
 @(private = "file")
 tilt_east :: proc(rocks: []u8, rows, cols: int) {
-    for r in 0 ..< rows {
-        stop, count := cols, 0
-        for c := cols - 1; c >= 0; c -= 1 {
-            if rocks[r * cols + c] == 'O' {
-                rocks[r * cols + c] = '.'
-                count += 1
-            }
-            if rocks[r * cols + c] == '#' || c == 0 {
-                for cc := stop - 1; cc > stop - 1 - count; cc -= 1 do rocks[r * cols + cc] = 'O'
-                count = 0
-                stop = c
-            }
-        }
+	for r in 0 ..< rows {
+		stop, count := cols, 0
+		for c := cols - 1; c >= 0; c -= 1 {
+			if rocks[r * cols + c] == 'O' {
+				rocks[r * cols + c] = '.'
+				count += 1
+			}
+			if rocks[r * cols + c] == '#' || c == 0 {
+				for cc := stop - 1; cc > stop - 1 - count; cc -= 1 do rocks[r * cols + cc] = 'O'
+				count = 0
+				stop = c
+			}
+		}
 	}
 }
 

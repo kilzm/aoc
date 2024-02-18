@@ -1,7 +1,6 @@
 package aoc
 
 import "core:fmt"
-import "core:slice"
 import "core:strings"
 import "core:testing"
 import "core:time"
@@ -16,9 +15,10 @@ day12 :: proc(input: string) -> (result_t, result_t) {
 	for line in strings.split_lines_iterator(&it) {
 		springs, _, group_str := strings.partition(line, " ")
 		groups_split := strings.split(group_str, ",")
-		groups := slice.mapper(groups_split, read_int)
+		groups := make([]int, len(groups_split))
+		for group, i in groups_split do groups[i] = read_int(group)
 		springs_len, groups_len := len(springs), len(groups)
-		springs_unfolded_len, groups_unfolded_len := M * springs_len + M, M * groups_len
+		springs_unfolded_len, groups_unfolded_len := M * (springs_len + 1), M * groups_len
 		springs_unfolded := make([]u8, springs_unfolded_len)
 		groups_unfolded := make([]int, groups_unfolded_len)
 		for i in 0 ..< M {

@@ -1,9 +1,13 @@
 package aoc
 
 import "core:fmt"
+import "core:intrinsics"
 import "core:math/bits"
+import "core:mem"
 import "core:strings"
+import "core:sync"
 import "core:testing"
+import "core:thread"
 import "core:time"
 
 @(private = "file")
@@ -25,7 +29,7 @@ Visits :: [110][4]u128
 Edges :: [4]u128
 
 @(private = "file")
-Graph :: [110][110][4]Dest
+Graph :: [110][110]#soa[4]Dest
 
 @(private = "file")
 Pos :: [2]int
@@ -42,29 +46,72 @@ day16 :: proc(input: string) -> (result_t, result_t) {
 	edges: Edges
 	part1 = get_energized(&graph, rows, cols, {0, 0}, Dir.EAST, &edges)
 	part2 = part1
-	for c in 0 ..< cols {
-		mask: u128 = 1 << u32(c)
-		if edges[Dir.NORTH] & mask == 0 {
-			part2 = max(part2, get_energized(&graph, rows, cols, {0, c}, Dir.SOUTH, &edges))
-		}
-		if edges[Dir.SOUTH] & mask == 0 {
-			part2 = max(part2, get_energized(&graph, rows, cols, {rows - 1, c}, Dir.NORTH, &edges))
+
+	ThreadData :: struct {
+		graph:      ^Graph,
+		edges:      ^Edges,
+		rows, cols: int,
+	}
+
+	north_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
+		for c in 0 ..< cols {
+			mask: u128 = 1 << u32(c)
+			if mask & edges[Dir.NORTH] == 0 {
+				max_ener^ = max(
+					max_ener^,
+					get_energized(graph, rows, cols, {0, c}, Dir.SOUTH, edges),
+				)
+			}
 		}
 	}
-	for r in 0 ..< rows {
-		mask: u128 = 1 << u32(r)
-		if edges[Dir.WEST] & mask == 0 {
-			part2 = max(part2, get_energized(&graph, rows, cols, {r, 0}, Dir.EAST, &edges))
-		}
-		if edges[Dir.EAST] & mask == 0 {
-			part2 = max(part2, get_energized(&graph, rows, cols, {r, cols - 1}, Dir.WEST, &edges))
+	south_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
+		for c in 0 ..< cols {
+			mask: u128 = 1 << u32(c)
+			if mask & edges[Dir.SOUTH] == 0 {
+				max_ener^ = max(
+					max_ener^,
+					get_energized(graph, rows, cols, {rows - 1, c}, Dir.NORTH, edges),
+				)
+			}
 		}
 	}
+	west_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
+		for r in 0 ..< rows {
+			mask: u128 = 1 << u32(r)
+			if mask & edges[Dir.WEST] == 0 {
+				max_ener^ = max(
+					max_ener^,
+					get_energized(graph, rows, cols, {r, 0}, Dir.EAST, edges),
+				)
+			}
+		}
+	}
+	east_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
+		for r in 0 ..< rows {
+			mask: u128 = 1 << u32(r)
+			if mask & edges[Dir.EAST] == 0 {
+				max_ener^ = max(
+					max_ener^,
+					get_energized(graph, rows, cols, {r, cols - 1}, Dir.WEST, edges),
+				)
+			}
+		}
+	}
+
+	tdata := ThreadData{&graph, &edges, rows, cols}
+	nmax, smax, emax, wmax: int
+	nthread := thread.create_and_start_with_poly_data2(&tdata, &nmax, north_worker)
+	sthread := thread.create_and_start_with_poly_data2(&tdata, &smax, south_worker)
+	wthread := thread.create_and_start_with_poly_data2(&tdata, &wmax, north_worker)
+	ethread := thread.create_and_start_with_poly_data2(&tdata, &emax, south_worker)
+	thread.join_multiple(nthread, sthread, wthread, ethread)
+	part2 = max(nmax, smax, wmax, emax)
+
 	return part1, part2
 }
 
 @(private = "file")
-get_energized :: proc(
+get_energized :: #force_inline proc(
 	graph: ^Graph,
 	rows, cols: int,
 	start: Pos,
@@ -91,7 +138,7 @@ get_energized :: proc(
 }
 
 @(private = "file")
-update :: proc(
+update :: #force_inline proc(
 	steps: ^[dynamic]Dest,
 	graph: ^Graph,
 	visits: ^Visits,
@@ -102,13 +149,13 @@ update :: proc(
 ) {
 	switch {
 	case pos.x < 0:
-		edges[Dir.NORTH] |= 1 << u32(pos.y)
+		sync.atomic_or(&edges[Dir.NORTH], 1 << u32(pos.y))
 	case pos.x >= rows:
-		edges[Dir.SOUTH] |= 1 << u32(pos.y)
+		sync.atomic_or(&edges[Dir.SOUTH], 1 << u32(pos.y))
 	case pos.y < 0:
-		edges[Dir.WEST] |= 1 << u32(pos.x)
+		sync.atomic_or(&edges[Dir.WEST], 1 << u32(pos.x))
 	case pos.y >= cols:
-		edges[Dir.EAST] |= 1 << u32(pos.x)
+		sync.atomic_or(&edges[Dir.EAST], 1 << u32(pos.x))
 	case:
 		if visits[pos.x][dir] & (1 << u32(pos.y)) == 0 {
 			visits[pos.x][dir] |= 1 << u32(pos.y)
@@ -118,7 +165,7 @@ update :: proc(
 }
 
 @(private = "file")
-parse :: proc(input: string) -> (graph: Graph, rows, cols: int) {
+parse :: #force_inline proc(input: string) -> (graph: Graph, rows, cols: int) {
 	it := input[:]
 	cols = strings.index_rune(input, '\n')
 	r := 0

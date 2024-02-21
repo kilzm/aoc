@@ -1,9 +1,7 @@
 package aoc
 
 import "core:fmt"
-import "core:intrinsics"
 import "core:math/bits"
-import "core:mem"
 import "core:strings"
 import "core:sync"
 import "core:testing"
@@ -23,89 +21,92 @@ Dir :: enum {
 }
 
 @(private = "file")
-Visits :: [110][4]u128
-
-@(private = "file")
-Edges :: [4]u128
-
-@(private = "file")
-Graph :: [110][110]#soa[4]Dest
-
-@(private = "file")
-Pos :: [2]int
+Graph :: [4][110]#soa[110]Dest
 
 @(private = "file")
 Dest :: struct {
-	pos1, pos2: Pos,
+	pos1, pos2: [2]int,
 	dir1, dir2: Dir,
 }
 
 day16 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	graph, rows, cols := parse(input)
-	edges: Edges
+	edges: [4]u128
 	part1 = get_energized(&graph, rows, cols, {0, 0}, Dir.EAST, &edges)
-	part2 = part1
+
+	Todo :: struct {
+		pos:  [2]int,
+		from: Dir,
+		opp:  Dir,
+	}
+
+	npoints := 2 * rows + 2 * cols
+	points := make([][2]int, npoints)
+	defer delete(points)
+
+	index: int
+	for r in 0 ..< rows {
+		points[index] = {r, 0}
+		points[index + 1] = {r, cols - 1}
+		index += 2
+	}
+	for c in 0 ..< cols {
+		points[index] = {0, c}
+		points[index + 1] = {rows - 1, c}
+		index += 2
+	}
 
 	ThreadData :: struct {
-		graph:      ^Graph,
-		edges:      ^Edges,
-		rows, cols: int,
+		result: ^int,
+		rows:   int,
+		cols:   int,
+		points: [][2]int,
+		graph:  ^Graph,
+		edges:  ^[4]u128,
 	}
 
-	north_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
-		for c in 0 ..< cols {
-			mask: u128 = 1 << u32(c)
-			if mask & edges[Dir.NORTH] == 0 {
-				max_ener^ = max(
-					max_ener^,
-					get_energized(graph, rows, cols, {0, c}, Dir.SOUTH, edges),
-				)
+	worker :: proc(using data: ^ThreadData, start, end: int) {
+		for i in start ..< end {
+			point := points[i]
+			d1, d2: Dir
+			mask: u128
+			if point.x == 0 {
+				mask = 1 << u32(point.y)
+				d1, d2 = .NORTH, .SOUTH
+			} else if point.x == rows - 1 {
+				mask = 1 << u32(point.y)
+				d1, d2 = .SOUTH, .NORTH
+			} else if point.y == 0 {
+				mask = 1 << u32(point.x)
+				d1, d2 = .EAST, .WEST
+			} else if point.y == cols - 1 {
+				mask = 1 << u32(point.x)
+				d1, d2 = .WEST, .EAST
 			}
-		}
-	}
-	south_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
-		for c in 0 ..< cols {
-			mask: u128 = 1 << u32(c)
-			if mask & edges[Dir.SOUTH] == 0 {
-				max_ener^ = max(
-					max_ener^,
-					get_energized(graph, rows, cols, {rows - 1, c}, Dir.NORTH, edges),
-				)
-			}
-		}
-	}
-	west_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
-		for r in 0 ..< rows {
-			mask: u128 = 1 << u32(r)
-			if mask & edges[Dir.WEST] == 0 {
-				max_ener^ = max(
-					max_ener^,
-					get_energized(graph, rows, cols, {r, 0}, Dir.EAST, edges),
-				)
-			}
-		}
-	}
-	east_worker :: proc(using data: ^ThreadData, max_ener: ^int) {
-		for r in 0 ..< rows {
-			mask: u128 = 1 << u32(r)
-			if mask & edges[Dir.EAST] == 0 {
-				max_ener^ = max(
-					max_ener^,
-					get_energized(graph, rows, cols, {r, cols - 1}, Dir.WEST, edges),
-				)
+			if mask & edges[d1] == 0 {
+				cur := get_energized(graph, rows, cols, point, d2, edges)
+				result^ = max(cur, result^)
 			}
 		}
 	}
 
-	tdata := ThreadData{&graph, &edges, rows, cols}
-	nmax, smax, emax, wmax: int
-	nthread := thread.create_and_start_with_poly_data2(&tdata, &nmax, north_worker)
-	sthread := thread.create_and_start_with_poly_data2(&tdata, &smax, south_worker)
-	wthread := thread.create_and_start_with_poly_data2(&tdata, &wmax, north_worker)
-	ethread := thread.create_and_start_with_poly_data2(&tdata, &emax, south_worker)
-	thread.join_multiple(nthread, sthread, wthread, ethread)
-	part2 = max(nmax, smax, wmax, emax)
+	T :: 20
+	threads: [T]^thread.Thread
+	results: [T]int
+	per_thread, start := npoints / T + 1, 0
+	for i in 0 ..< T {
+		end := min(start + per_thread, npoints)
+		data := ThreadData{&results[i], rows, cols, points, &graph, &edges}
+		threads[i] = thread.create_and_start_with_poly_data3(&data, start, end, worker)
+		start = end
+	}
+
+	for i in 0 ..< T {
+		thread.join(threads[i])
+		thread.destroy(threads[i])
+		part2 = max(part2, results[i])
+	}
 
 	return part1, part2
 }
@@ -114,26 +115,32 @@ day16 :: proc(input: string) -> (result_t, result_t) {
 get_energized :: #force_inline proc(
 	graph: ^Graph,
 	rows, cols: int,
-	start: Pos,
+	start: [2]int,
 	dir: Dir,
-	edges: ^Edges,
+	edges: ^[4]u128,
 ) -> (
 	energized: int,
 ) {
-	visits: Visits
+	visits: [110][4]u128
 	steps := make([dynamic]Dest)
 	defer delete(steps)
-	append(&steps, graph[start.x][start.y][dir])
-	visits[start.x][dir] |= (1 << u32(start.y))
+	append(&steps, graph[dir][start.x][start.y])
+
+	visits[start.x][dir] |= 1 << u32(start.y)
+
 	for len(steps) != 0 {
 		step := pop(&steps)
 		update(&steps, graph, &visits, edges, step.pos1, step.dir1, rows, cols)
-		if step.dir2 != .NONE do update(&steps, graph, &visits, edges, step.pos2, step.dir2, rows, cols)
+		if step.dir2 != .NONE {
+			update(&steps, graph, &visits, edges, step.pos2, step.dir2, rows, cols)
+		}
 	}
+
 	for visit in visits {
-		v := visit[0] | visit[1] | visit[2] | visit[3]
+		v := visit.x | visit.y | visit.z | visit.w
 		energized += int(bits.count_ones(v))
 	}
+
 	return
 }
 
@@ -141,9 +148,9 @@ get_energized :: #force_inline proc(
 update :: #force_inline proc(
 	steps: ^[dynamic]Dest,
 	graph: ^Graph,
-	visits: ^Visits,
-	edges: ^Edges,
-	pos: Pos,
+	visits: ^[110][4]u128,
+	edges: ^[4]u128,
+	pos: [2]int,
 	dir: Dir,
 	rows, cols: int,
 ) {
@@ -159,7 +166,7 @@ update :: #force_inline proc(
 	case:
 		if visits[pos.x][dir] & (1 << u32(pos.y)) == 0 {
 			visits[pos.x][dir] |= 1 << u32(pos.y)
-			append(steps, graph[pos.x][pos.y][dir])
+			append(steps, graph[dir][pos.x][pos.y])
 		}
 	}
 }
@@ -171,10 +178,10 @@ parse :: #force_inline proc(input: string) -> (graph: Graph, rows, cols: int) {
 	r := 0
 	for line in strings.split_lines_iterator(&it) {
 		for symbol, c in line {
-			gn := &graph[r][c][Dir.NORTH]
-			ge := &graph[r][c][Dir.EAST]
-			gs := &graph[r][c][Dir.SOUTH]
-			gw := &graph[r][c][Dir.WEST]
+			gn := &graph[Dir.NORTH][r][c]
+			ge := &graph[Dir.EAST][r][c]
+			gs := &graph[Dir.SOUTH][r][c]
+			gw := &graph[Dir.WEST][r][c]
 			switch symbol {
 			case '.':
 				gn^ = Dest{{r - 1, c}, {}, .NORTH, .NONE}

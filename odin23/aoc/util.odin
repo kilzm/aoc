@@ -17,9 +17,9 @@ read_i64 :: proc(str: string) -> (result: i64) {
 	return
 }
 
-read_int :: proc(str: string) -> (result: int) {
-	result = int(read_i64(str))
-	return
+read_int :: proc(str: string, base: int = 10) -> int {
+	result, _ := strconv.parse_i64_of_base(str, base)
+	return int(result)
 }
 
 ipow :: proc(base: int, exp: u32) -> (res: int) {

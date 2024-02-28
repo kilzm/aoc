@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,9 +6,9 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 12
 
+@(private)
 day12 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	it := input[:]
@@ -43,7 +44,6 @@ day12 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 calculate_arrangements :: proc(springs: string, groups: []int) -> (n_arrangements: int) {
 	tsprings := fmt.aprintf(".%s", strings.trim_right(springs, "."))
 	defer delete(tsprings)
@@ -68,7 +68,6 @@ calculate_arrangements :: proc(springs: string, groups: []int) -> (n_arrangement
 	return dp[len(dp) - 1]
 }
 
-@(private = "file")
 test_input :: `???.### 1,1,3
 .??..??...?##. 1,1,3
 ?#?#?#?#?#?#?#? 1,3,1,6
@@ -77,7 +76,7 @@ test_input :: `???.### 1,1,3
 ?###???????? 3,2,1
 `
 
-@(test)
+@(test, private)
 test_example_d12_p1 :: proc(t: ^testing.T) {
 	part1, _ := day12(test_input)
 	part1_expected := int(21)
@@ -88,7 +87,7 @@ test_example_d12_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d12_p2 :: proc(t: ^testing.T) {
 	_, part2 := day12(test_input)
 	part2_expected := int(525152)
@@ -99,6 +98,7 @@ test_example_d12_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day12 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -107,6 +107,7 @@ setup_day12 :: proc(
 	return nil
 }
 
+@(private)
 bench_day12 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

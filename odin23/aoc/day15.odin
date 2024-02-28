@@ -1,29 +1,38 @@
+//+private file
 package aoc
 
 import "core:fmt"
+import "core:slice"
 import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 15
 
-@(private = "file")
 Lens :: struct {
 	label: string,
 	focal: u8,
 }
 
-@(private = "file")
 Box :: struct {
 	lenses: [dynamic]Lens,
 }
 
+@(private)
 day15 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: u64
 	it := input[:len(input) - 1]
 	boxes: [256]Box
 	defer for box in boxes do delete(box.lenses)
+
+	hash :: #force_inline proc(str: string) -> (hash: u64) {
+		return slice.reduce(
+			transmute([]u8)str,
+			u64(0),
+			proc(a: u64, b: u8) -> u64 {return ((a + u64(b)) * 17) & 0xff},
+		)
+	}
+
 	for step in strings.split_iterator(&it, ",") {
 		part1 += hash(step)
 		l := len(step)
@@ -55,17 +64,11 @@ day15 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-hash :: proc(str: string) -> (hash: u64) {
-	for c in 0 ..< len(str) do hash = (hash + u64(str[c])) * 17 %% 256
-	return
-}
 
-@(private = "file")
 test_input :: `rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7
 `
 
-@(test)
+@(test, private)
 test_example_d15_p1 :: proc(t: ^testing.T) {
 	part1, _ := day15(test_input)
 	part1_expected := u64(1320)
@@ -76,7 +79,7 @@ test_example_d15_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d15_p2 :: proc(t: ^testing.T) {
 	_, part2 := day15(test_input)
 	part2_expected := u64(145)
@@ -87,6 +90,7 @@ test_example_d15_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day15 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -95,6 +99,7 @@ setup_day15 :: proc(
 	return nil
 }
 
+@(private)
 bench_day15 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

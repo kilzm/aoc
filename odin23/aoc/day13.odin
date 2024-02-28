@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,9 +6,9 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 13
 
+@(private)
 day13 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	it := input[:len(input) - 1]
@@ -21,7 +22,6 @@ day13 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 score_pattern :: proc(pattern: []string, rows, cols: int) -> (smudge: int, no_smudge: int) {
 	for c in 1 ..< cols {
 		faults: int
@@ -58,7 +58,6 @@ score_pattern :: proc(pattern: []string, rows, cols: int) -> (smudge: int, no_sm
 }
 
 
-@(private = "file")
 test_input :: `#.##..##.
 ..#.##.#.
 ##......#
@@ -76,7 +75,7 @@ test_input :: `#.##..##.
 #....#..#
 `
 
-@(test)
+@(test, private)
 test_example_d13_p1 :: proc(t: ^testing.T) {
 	part1, _ := day13(test_input)
 	part1_expected := int(405)
@@ -87,7 +86,7 @@ test_example_d13_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d13_p2 :: proc(t: ^testing.T) {
 	_, part2 := day13(test_input)
 	part2_expected := int(400)
@@ -98,6 +97,7 @@ test_example_d13_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day13 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -106,6 +106,7 @@ setup_day13 :: proc(
 	return nil
 }
 
+@(private)
 bench_day13 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

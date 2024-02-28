@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,14 +8,13 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 6
 
-@(private = "file")
 Race :: struct {
 	time, distance: i64,
 }
 
+@(private)
 day06 :: proc(input: string) -> (result_t, result_t) {
 	part1: i64 = 1
 	part2: i64
@@ -29,7 +29,6 @@ day06 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 parse_input :: proc(input: string) -> ([]Race, Race) {
 	races: [dynamic]Race
 	lines := strings.split_lines(input)
@@ -50,7 +49,6 @@ parse_input :: proc(input: string) -> ([]Race, Race) {
 	return races[:], Race{read_i64(time_joined), read_i64(distance_joined)}
 }
 
-@(private = "file")
 calculate_winning_range :: proc(race: Race) -> (lower, upper: i64) {
 	fb, fc := f64(race.time), f64(-race.distance) - 0.0000000001
 	discriminant := math.sqrt_f64(fb * fb + 4 * fc)
@@ -59,12 +57,11 @@ calculate_winning_range :: proc(race: Race) -> (lower, upper: i64) {
 	return
 }
 
-@(private = "file")
 test_input :: `Time:      7  15   30
 Distance:  9  40  200
 `
 
-@(test)
+@(test, private)
 test_example_d06_p1 :: proc(t: ^testing.T) {
 	part1, _ := day06(test_input)
 	part1_expected := i64(288)
@@ -75,7 +72,7 @@ test_example_d06_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d06_p2 :: proc(t: ^testing.T) {
 	_, part2 := day06(test_input)
 	part2_expected := i64(71503)
@@ -86,6 +83,7 @@ test_example_d06_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day06 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -94,6 +92,7 @@ setup_day06 :: proc(
 	return nil
 }
 
+@(private)
 bench_day06 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

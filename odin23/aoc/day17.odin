@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,9 +6,9 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 17
 
+@(private)
 day17 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: u64
 	lines := strings.split_lines(input[:len(input) - 1])
@@ -31,7 +32,6 @@ day17 :: proc(input: string) -> (result_t, result_t) {
 }
 
 
-@(private = "file")
 astar :: #force_inline proc(heat: ^[]u32, rows, cols, mind, maxd: u32) -> u32 {
 	N :: 128
 	Orientation :: enum {
@@ -137,7 +137,6 @@ astar :: #force_inline proc(heat: ^[]u32, rows, cols, mind, maxd: u32) -> u32 {
 	return 0
 }
 
-@(private = "file")
 test_input :: `2413432311323
 3215453535623
 3255245654254
@@ -153,7 +152,7 @@ test_input :: `2413432311323
 4322674655533
 `
 
-@(test)
+@(test, private)
 test_example_d17_p1 :: proc(t: ^testing.T) {
 	part1, _ := day17(test_input)
 	part1_expected := u64(102)
@@ -164,7 +163,7 @@ test_example_d17_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d17_p2 :: proc(t: ^testing.T) {
 	_, part2 := day17(test_input)
 	part2_expected := u64(94)
@@ -175,6 +174,7 @@ test_example_d17_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day17 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -183,6 +183,7 @@ setup_day17 :: proc(
 	return nil
 }
 
+@(private)
 bench_day17 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

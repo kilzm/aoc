@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,12 +8,12 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 9
 
+@(private)
 day09 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	seqs, seqlen := parse_input(input)
+	seqs, seqlen := parse(input)
 	defer delete(seqs)
 	for seq in seqs {
 		dseqs := make([dynamic][]int)
@@ -42,8 +43,7 @@ day09 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-parse_input :: proc(input: string) -> (seqs: [dynamic][]int, seqlen: int) {
+parse :: proc(input: string) -> (seqs: [dynamic][]int, seqlen: int) {
 	lines := strings.split_lines(input)
 	defer delete(lines)
 	seqlen = slice.count(transmute([]u8)lines[0], ' ') + 1
@@ -60,13 +60,12 @@ parse_input :: proc(input: string) -> (seqs: [dynamic][]int, seqlen: int) {
 	return
 }
 
-@(private = "file")
 test_input :: `0 3 6 9 12 15
 1 3 6 10 15 21
 10 13 16 21 30 45
 `
 
-@(test)
+@(test, private)
 test_example_d09_p1 :: proc(t: ^testing.T) {
 	part1, _ := day09(test_input)
 	part1_expected := int(114)
@@ -77,7 +76,7 @@ test_example_d09_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d09_p2 :: proc(t: ^testing.T) {
 	_, part2 := day09(test_input)
 	part2_expected := int(2)
@@ -88,6 +87,7 @@ test_example_d09_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day09 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -96,6 +96,7 @@ setup_day09 :: proc(
 	return nil
 }
 
+@(private)
 bench_day09 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

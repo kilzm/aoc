@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,15 +8,14 @@ import "core:testing"
 import "core:time"
 import "core:unicode"
 
-@(private = "file")
 DAY :: 3
 
-@(private = "file")
 Gear :: struct {
 	nums:   [2]int,
 	amount: int,
 }
 
+@(private)
 day03 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	schematic := strings.split_lines(input)
@@ -59,7 +59,6 @@ day03 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 update_gears :: proc(gears: ^[]Gear, index, num: int) {
 	gear := &gears[index]
 	if &gears[index] == nil {
@@ -71,7 +70,6 @@ update_gears :: proc(gears: ^[]Gear, index, num: int) {
 	gear.amount += 1
 }
 
-@(private = "file")
 test_input :: `467..114..
 ...*......
 ..35..633.
@@ -83,7 +81,7 @@ test_input :: `467..114..
 ...$.*....
 .664.598..`
 
-@(test)
+@(test, private)
 test_example_d03_p1 :: proc(t: ^testing.T) {
 	part1, _ := day03(test_input)
 	part1_expected := int(4361)
@@ -94,7 +92,7 @@ test_example_d03_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d03_p2 :: proc(t: ^testing.T) {
 	_, part2 := day03(test_input)
 	part2_expected := int(467835)
@@ -105,6 +103,7 @@ test_example_d03_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day03 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -113,6 +112,7 @@ setup_day03 :: proc(
 	return nil
 }
 
+@(private)
 bench_day03 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

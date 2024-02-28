@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,31 +6,27 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 19
 
-@(private = "file")
 Part :: distinct [4]u64
 
-@(private = "file")
 Action :: union {
 	bool, // accepted
 	string, // next workflow
 }
 
-@(private = "file")
 Cond :: struct {
 	var:      u8,
 	from, to: u64,
 	action:   Action,
 }
 
-@(private = "file")
 Rule :: union {
 	Action,
 	Cond,
 }
 
+@(private)
 day19 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: u64
 	workflows, parts := parse(input)
@@ -54,7 +51,6 @@ day19 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 parse :: #force_inline proc(
 	input: string,
 ) -> (
@@ -104,11 +100,10 @@ parse :: #force_inline proc(
 	return
 }
 
-@(private = "file")
 validate :: #force_inline proc(part: Part, workflows: map[string][dynamic]Rule) -> bool {
 	wf := workflows["in"]
-	for {
-		loop: for rule in wf {
+	loop: for {
+		for rule in wf {
 			switch r in rule {
 			case Action:
 				switch a in r {
@@ -116,7 +111,7 @@ validate :: #force_inline proc(part: Part, workflows: map[string][dynamic]Rule) 
 					return a
 				case string:
 					wf = workflows[a]
-					break loop
+					continue loop
 				}
 			case Cond:
 				if v := part[r.var]; r.from <= v && v < r.to {
@@ -125,7 +120,7 @@ validate :: #force_inline proc(part: Part, workflows: map[string][dynamic]Rule) 
 						return a
 					case string:
 						wf = workflows[a]
-						break loop
+						continue loop
 					}
 				}
 			}
@@ -133,7 +128,6 @@ validate :: #force_inline proc(part: Part, workflows: map[string][dynamic]Rule) 
 	}
 }
 
-@(private = "file")
 count :: proc(
 	ranges: [2]Part,
 	wf: [dynamic]Rule,
@@ -191,7 +185,6 @@ count :: proc(
 	return combinations
 }
 
-@(private = "file")
 test_input :: `px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}
 lnx{m>1548:A,A}
@@ -210,7 +203,7 @@ hdj{m>838:A,pv}
 {x=2461,m=1339,a=466,s=291}
 {x=2127,m=1623,a=2188,s=1013}`
 
-@(test)
+@(test, private)
 test_example_d19_p1 :: proc(t: ^testing.T) {
 	part1, _ := day19(test_input)
 	part1_expected := u64(19114)
@@ -221,7 +214,7 @@ test_example_d19_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d19_p2 :: proc(t: ^testing.T) {
 	_, part2 := day19(test_input)
 	part2_expected := u64(167409079868000)
@@ -232,6 +225,7 @@ test_example_d19_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day19 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -240,6 +234,7 @@ setup_day19 :: proc(
 	return nil
 }
 
+@(private)
 bench_day19 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -6,23 +7,15 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 10
 
-@(private = "file")
-Offset :: [2]int
+UP :: [2]int{-1, 0}
+RIGHT :: [2]int{0, 1}
+DOWN :: [2]int{1, 0}
+LEFT :: [2]int{0, -1}
+offsets :: [4][2]int{UP, RIGHT, DOWN, LEFT}
 
-@(private = "file")
-UP :: Offset{-1, 0}
-@(private = "file")
-RIGHT :: Offset{0, 1}
-@(private = "file")
-DOWN :: Offset{1, 0}
-@(private = "file")
-LEFT :: Offset{0, -1}
-@(private = "file")
-offsets :: [4]Offset{UP, RIGHT, DOWN, LEFT}
-
+@(private)
 day10 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	lines := strings.split_lines(input)
@@ -30,18 +23,18 @@ day10 :: proc(input: string) -> (result_t, result_t) {
 	R, C := len(lines), len(lines[0])
 	grid := make([]u8, R * C)
 	lgrid := make([]u8, R * C)
-	for line, i in lines do copy_from_string(grid[i * C:(i + 1) * C], line)
+	for line, i in lines do copy(grid[i * C:(i + 1) * C], line)
 	defer {
 		delete(lines)
 		delete(grid)
 		delete(lgrid)
 	}
 
-	pos: Offset
+	pos: [2]int
 	outer: for r in 0 ..< R {
 		for c in 0 ..< C {
 			if grid[C * r + c] == 'S' {
-				pos = Offset{r, c}
+				pos = [2]int{r, c}
 				break outer
 			}
 		}
@@ -90,8 +83,7 @@ day10 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-find_start_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (dir: Offset) {
+find_start_dir :: #force_inline proc(grid: []u8, pos: [2]int, R, C: int) -> (dir: [2]int) {
 	connected: u8
 	reachable := [4][]u8{{'|', '7', 'F'}, {'-', '7', 'J'}, {'|', 'J', 'L'}, {'-', 'L', 'F'}}
 	for offset, i in offsets {
@@ -117,8 +109,7 @@ find_start_dir :: proc(grid: []u8, pos: Offset, R, C: int) -> (dir: Offset) {
 	}
 }
 
-@(private = "file")
-walk :: proc(dir: Offset, tile: u8) -> Offset {
+walk :: #force_inline proc(dir: [2]int, tile: u8) -> [2]int {
 	switch tile {
 	case 'F':
 		return dir.x == -1 ? RIGHT : DOWN
@@ -133,7 +124,6 @@ walk :: proc(dir: Offset, tile: u8) -> Offset {
 	}
 }
 
-@(private = "file")
 test_input_p1 :: `7-F7-
 .FJ|7
 SJLL7
@@ -141,7 +131,7 @@ SJLL7
 LJ.LJ
 `
 
-@(test)
+@(test, private)
 test_example_d10_p1 :: proc(t: ^testing.T) {
 	part1, _ := day10(test_input_p1)
 	part1_expected := int(8)
@@ -152,7 +142,6 @@ test_example_d10_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(private = "file")
 test_input_p2 :: `FF7FSF7F7F7F7F7F---7
 L|LJ||||||||||||F--J
 FL-7LJLJ||||||LJL-77
@@ -165,7 +154,7 @@ L.L7LFJ|||||FJL7||LJ
 L7JLJL-JLJLJL--JLJ.L
 `
 
-@(test)
+@(private, test)
 test_example_d10_p2 :: proc(t: ^testing.T) {
 	_, part2 := day10(test_input_p2)
 	part2_expected := int(10)
@@ -176,6 +165,7 @@ test_example_d10_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day10 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -184,6 +174,7 @@ setup_day10 :: proc(
 	return nil
 }
 
+@(private)
 bench_day10 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

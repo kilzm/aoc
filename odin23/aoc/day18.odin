@@ -1,20 +1,19 @@
+//+private file
 package aoc
 
 import "core:fmt"
-import "core:strconv"
 import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 18
 
-@(private = "file")
 Move :: struct {
 	dir: u8,
 	amt: int,
 }
 
+@(private)
 day18 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	moves_a, moves_b := parse(input)
@@ -27,7 +26,6 @@ day18 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 parse :: #force_inline proc(input: string) -> (moves_a, moves_b: [dynamic]Move) {
 	moves_b, moves_a = make([dynamic]Move, 0, 500), make([dynamic]Move, 0, 500)
 	it := input
@@ -39,8 +37,7 @@ parse :: #force_inline proc(input: string) -> (moves_a, moves_b: [dynamic]Move) 
 	return
 }
 
-@(private = "file")
-calculate_area :: proc(moves: ^[dynamic]Move) -> int {
+calculate_area :: #force_inline proc(moves: ^[dynamic]Move) -> int {
 	prev, pos: [2]int
 	area, perim: int
 
@@ -62,7 +59,6 @@ calculate_area :: proc(moves: ^[dynamic]Move) -> int {
 	return area / 2 + perim / 2 + 1
 }
 
-@(private = "file")
 test_input :: `R 6 (#70c710)
 D 5 (#0dc571)
 L 2 (#5713f0)
@@ -78,7 +74,7 @@ U 3 (#a77fa3)
 L 2 (#015232)
 U 2 (#7a21e3)`
 
-@(test)
+@(test, private)
 test_example_d18_p1 :: proc(t: ^testing.T) {
 	part1, _ := day18(test_input)
 	part1_expected := int(62)
@@ -89,7 +85,7 @@ test_example_d18_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d18_p2 :: proc(t: ^testing.T) {
 	_, part2 := day18(test_input)
 	part2_expected := int(952408144115)
@@ -100,6 +96,7 @@ test_example_d18_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day18 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -108,6 +105,7 @@ setup_day18 :: proc(
 	return nil
 }
 
+@(private)
 bench_day18 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

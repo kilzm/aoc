@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,9 +8,9 @@ import "core:time"
 import "core:unicode"
 import "core:unicode/utf8"
 
-@(private = "file")
 DAY :: 1
 
+@(private)
 day01 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	it := input[:]
@@ -20,7 +21,6 @@ day01 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 get_calibration_value :: proc(line: string) -> int {
 	calibration_value: int
 	for c in line {
@@ -38,7 +38,6 @@ get_calibration_value :: proc(line: string) -> int {
 	return calibration_value
 }
 
-@(private = "file")
 get_actual_calibration_value :: proc(line: string) -> int {
 	spelled :: []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 	get_first_digit :: proc(line: string) -> int {
@@ -47,7 +46,7 @@ get_actual_calibration_value :: proc(line: string) -> int {
 			if c := utf8.rune_at(substr, 0); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
-			for sp, j in spelled {
+			for &sp, j in spelled {
 				if strings.has_prefix(substr, sp) {
 					return j + 1
 				}
@@ -61,7 +60,7 @@ get_actual_calibration_value :: proc(line: string) -> int {
 			if c := utf8.rune_at(substr, i - 1); unicode.is_digit(c) {
 				return rune_to_int(c)
 			}
-			for sp, j in spelled {
+			for &sp, j in spelled {
 				if strings.has_suffix(substr, sp) {
 					return j + 1
 				}
@@ -72,13 +71,12 @@ get_actual_calibration_value :: proc(line: string) -> int {
 	return get_first_digit(line) * 10 + get_last_digit(line)
 }
 
-@(private = "file")
 test_input_p1 :: `pqr3stu8vwx
 1abc2
 a1b2c3d4e5f
 treb7uchet`
 
-@(test)
+@(test, private)
 test_example_d01_p1 :: proc(t: ^testing.T) {
 	part1, _ := day01(test_input_p1)
 	part1_expected := int(142)
@@ -89,7 +87,6 @@ test_example_d01_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(private = "file")
 test_input_p2 :: `two1nine
 eightwothree
 abcone2threextz
@@ -99,7 +96,7 @@ zoneight234
 7pqrstsixteen`
 
 
-@(test)
+@(test, private)
 test_example_d01_p2 :: proc(t: ^testing.T) {
 	_, part2 := day01(test_input_p2)
 	part2_expected := int(281)
@@ -110,6 +107,7 @@ test_example_d01_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day01 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -118,6 +116,7 @@ setup_day01 :: proc(
 	return nil
 }
 
+@(private)
 bench_day01 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

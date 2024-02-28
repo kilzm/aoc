@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,14 +8,13 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 4
 
-@(private = "file")
 Layout :: struct {
 	wstart, n_wnums, nstart, n_nums: int,
 }
 
+@(private)
 day04 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	layout := determine_layout(input[:strings.index_rune(input, '\n')])
@@ -46,7 +46,6 @@ day04 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 determine_layout :: proc(line: string) -> (layout: Layout) {
 	colon := strings.index_rune(line, ':')
 	layout.wstart = colon + 2
@@ -57,7 +56,6 @@ determine_layout :: proc(line: string) -> (layout: Layout) {
 	return
 }
 
-@(private = "file")
 fill_nums :: proc(line: string, wnums, nums: []int, layout: Layout) {
 	index := layout.wstart
 	for i in 0 ..< layout.n_wnums {
@@ -79,11 +77,9 @@ fill_nums :: proc(line: string, wnums, nums: []int, layout: Layout) {
 	}
 }
 
-@(private = "file")
-lut := [?]int{0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024}
 
-@(private = "file")
-get_count_and_score :: proc(wnums, nums: []int) -> (count, score: int) {
+get_count_and_score :: #force_inline proc(wnums, nums: []int) -> (count, score: int) {
+    lut := []int{0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024}
 	for num in nums {
 		if slice.contains(wnums, num) do count += 1
 	}
@@ -91,7 +87,6 @@ get_count_and_score :: proc(wnums, nums: []int) -> (count, score: int) {
 	return
 }
 
-@(private = "file")
 test_input :: `Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
 Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
@@ -100,7 +95,7 @@ Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
 `
 
-@(test)
+@(test, private)
 test_example_d04_p1 :: proc(t: ^testing.T) {
 	part1, _ := day04(test_input)
 	part1_expected := int(13)
@@ -111,7 +106,7 @@ test_example_d04_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d04_p2 :: proc(t: ^testing.T) {
 	_, part2 := day04(test_input)
 	part2_expected := int(30)
@@ -122,6 +117,7 @@ test_example_d04_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day04 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -130,6 +126,7 @@ setup_day04 :: proc(
 	return nil
 }
 
+@(private)
 bench_day04 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

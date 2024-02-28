@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,15 +6,12 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 11
 
-@(private = "file")
-Galaxy :: [2]int
-
+@(private)
 day11 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	galaxies: [dynamic]Galaxy
+	galaxies: [dynamic][2]int
 	grid := strings.split_lines(input)
 	R, C := len(grid) - 1, len(grid[0])
 	grid = grid[:R]
@@ -33,7 +31,7 @@ day11 :: proc(input: string) -> (result_t, result_t) {
 			if point == '#' {
 				grow = true
 				gcols[c] = true
-				append(&galaxies, Galaxy{r, c})
+				append(&galaxies, [2]int{r, c})
 			}
 		}
 		if !grow do nerows += 1
@@ -52,25 +50,23 @@ day11 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-calculate :: proc(factor: int, galaxies: []Galaxy, erows, ecols: []int) -> (result: int) {
-	galaxies_exp := make([]Galaxy, len(galaxies))
+calculate :: proc(factor: int, galaxies: [][2]int, erows, ecols: []int) -> (result: int) {
+	galaxies_exp := make([][2]int, len(galaxies))
 	defer delete(galaxies_exp)
 	for galaxy, i in galaxies {
-		r, c := galaxy[0], galaxy[1]
+		r, c := galaxy.x, galaxy.y
 		offset: [2]int = {(factor - 1) * erows[r], (factor - 1) * ecols[c]}
 		galaxies_exp[i] = galaxy + offset
 	}
 	for g1, i in galaxies_exp {
 		for g2 in galaxies_exp[i + 1:] {
-			result += abs(g1[0] - g2[0]) + abs(g1[1] - g2[1])
+			result += abs(g1.x - g2.x) + abs(g1.y - g2.y)
 		}
 	}
 
 	return
 }
 
-@(private = "file")
 test_input :: `...#......
 .......#..
 #.........
@@ -83,7 +79,7 @@ test_input :: `...#......
 #...#.....
 `
 
-@(test)
+@(test, private)
 test_example_d11_p1 :: proc(t: ^testing.T) {
 	part1, _ := day11(test_input)
 	part1_expected := int(374)
@@ -94,7 +90,7 @@ test_example_d11_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d11_p2 :: proc(t: ^testing.T) {
 	_, part2 := day11(test_input)
 	part2_expected := int(82000210)
@@ -105,6 +101,7 @@ test_example_d11_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day11 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -113,6 +110,7 @@ setup_day11 :: proc(
 	return nil
 }
 
+@(private)
 bench_day11 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

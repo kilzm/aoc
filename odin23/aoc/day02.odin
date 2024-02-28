@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -6,9 +7,9 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 2
 
+@(private)
 day02 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	it := input[:]
@@ -22,7 +23,6 @@ day02 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 check_game :: proc(game: string) -> bool {
 	it := game[:]
 	for sample in strings.split_iterator(&it, "; ") {
@@ -41,7 +41,6 @@ check_game :: proc(game: string) -> bool {
 	return true
 }
 
-@(private = "file")
 get_power_for_game :: proc(game: string) -> int {
 	red, green, blue: int
 	it := game[:]
@@ -64,14 +63,13 @@ get_power_for_game :: proc(game: string) -> int {
 	return red * green * blue
 }
 
-@(private = "file")
 test_input :: `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 
-@(test)
+@(test, private)
 test_example_d02_p1 :: proc(t: ^testing.T) {
 	part1, _ := day02(test_input)
 	part1_expected := int(8)
@@ -82,7 +80,7 @@ test_example_d02_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d02_p2 :: proc(t: ^testing.T) {
 
 	_, part2 := day02(test_input)
@@ -94,6 +92,7 @@ test_example_d02_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day02 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -102,6 +101,7 @@ setup_day02 :: proc(
 	return nil
 }
 
+@(private)
 bench_day02 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

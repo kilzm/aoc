@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,17 +8,14 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 7
 
-@(private = "file")
 Hand :: struct {
 	bid:   int,
 	eval:  u32,
 	evalj: u32,
 }
 
-@(private = "file")
 HandType :: enum {
 	HIGH      = 1 << 25,
 	ONEPAIR   = 1 << 26,
@@ -28,6 +26,7 @@ HandType :: enum {
 	FIVE      = 1 << 31,
 }
 
+@(private)
 day07 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	it := input[:]
@@ -47,8 +46,7 @@ day07 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-maximum_two :: proc(amounts: []u8) -> (max, smax: u8) {
+maximum_two :: #force_inline proc(amounts: []u8) -> (max, smax: u8) {
 	for n in amounts {
 		if n > max {
 			smax = max
@@ -60,8 +58,7 @@ maximum_two :: proc(amounts: []u8) -> (max, smax: u8) {
 	return
 }
 
-@(private = "file")
-card_strength :: proc(card: byte) -> int {
+card_strength :: #force_inline proc(card: byte) -> int {
 	switch card {
 	case 'A':
 		return 12
@@ -78,8 +75,7 @@ card_strength :: proc(card: byte) -> int {
 	}
 }
 
-@(private = "file")
-card_strength_joker :: proc(card: byte) -> int {
+card_strength_joker :: #force_inline proc(card: byte) -> int {
 	switch card {
 	case 'A':
 		return 12
@@ -96,7 +92,7 @@ card_strength_joker :: proc(card: byte) -> int {
 	}
 }
 
-get_type :: proc(max, smax: u8) -> HandType {
+get_type :: #force_inline proc(max, smax: u8) -> HandType {
 	switch max {
 	case 5:
 		return .FIVE
@@ -111,7 +107,6 @@ get_type :: proc(max, smax: u8) -> HandType {
 	}
 }
 
-@(private = "file")
 evaluate_hand :: proc(hand: string) -> (eval: u32, evalj: u32) {
 	amounts: [13]u8
 	powers := [5]int{1, 13, 169, 2197, 28561}
@@ -130,7 +125,6 @@ evaluate_hand :: proc(hand: string) -> (eval: u32, evalj: u32) {
 	return
 }
 
-@(private = "file")
 test_input :: `32T3K 765
 T55J5 684
 KK677 28
@@ -138,7 +132,7 @@ KTJJT 220
 QQQJA 483
 `
 
-@(test)
+@(test, private)
 test_example_d07_p1 :: proc(t: ^testing.T) {
 	part1, _ := day07(test_input)
 	part1_expected := int(6440)
@@ -149,7 +143,7 @@ test_example_d07_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d07_p2 :: proc(t: ^testing.T) {
 	_, part2 := day07(test_input)
 	part2_expected := int(5905)
@@ -160,6 +154,7 @@ test_example_d07_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day07 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -168,6 +163,7 @@ setup_day07 :: proc(
 	return nil
 }
 
+@(private)
 bench_day07 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

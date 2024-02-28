@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -5,18 +6,17 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 0
 
+@(private)
 dayXX :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	return part1, part2
 }
 
-@(private = "file")
 test_input :: ``
 
-// @(test)
+// @(test, private)
 test_example_dXX_p1 :: proc(t: ^testing.T) {
 	part1, _ := dayXX(test_input)
 	part1_expected := int(0)
@@ -27,7 +27,7 @@ test_example_dXX_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-// @(test)
+// @(test, private)
 test_example_dXX_p2 :: proc(t: ^testing.T) {
 	_, part2 := dayXX(test_input)
 	part2_expected := int(0)
@@ -38,6 +38,7 @@ test_example_dXX_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_dayXX :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -46,6 +47,7 @@ setup_dayXX :: proc(
 	return nil
 }
 
+@(private)
 bench_dayXX :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

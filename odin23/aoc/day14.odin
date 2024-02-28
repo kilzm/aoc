@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,10 +8,8 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 14
 
-@(private = "file")
 Direction :: enum {
 	NORTH,
 	SOUTH,
@@ -18,9 +17,9 @@ Direction :: enum {
 	WEST,
 }
 
-@(private = "file")
-hash :: distinct u128
+Hash :: distinct u128
 
+@(private)
 day14 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	lines := strings.split_lines(input[:len(input) - 1])
@@ -38,7 +37,7 @@ day14 :: proc(input: string) -> (result_t, result_t) {
 	tilt_north(rocks, rows, cols)
 	part1 = get_load(rocks, rows, cols)
 
-	seen_positions := make([dynamic]hash)
+	seen_positions := make([dynamic]Hash)
 	defer delete(seen_positions)
 
 	cycles, cycle_interval: int
@@ -59,17 +58,15 @@ day14 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-cycle :: proc(rocks: []u8, rows, cols, nrocks: int) -> hash {
+cycle :: proc(rocks: []u8, rows, cols, nrocks: int) -> Hash {
 	tilt_north(rocks, rows, cols)
 	tilt_west(rocks, rows, cols)
 	tilt_south(rocks, rows, cols)
 	tilt_east(rocks, rows, cols)
-	return transmute(hash)xxhash.XXH3_128_default(rocks)
+	return transmute(Hash)xxhash.XXH3_128_default(rocks)
 }
 
-@(private = "file")
-tilt_north :: proc(rocks: []u8, rows, cols: int) {
+tilt_north :: #force_inline proc(rocks: []u8, rows, cols: int) {
 	for c in 0 ..< cols {
 		stop, count := -1, 0
 		for r := 0; r < rows; r += 1 {
@@ -86,8 +83,7 @@ tilt_north :: proc(rocks: []u8, rows, cols: int) {
 	}
 }
 
-@(private = "file")
-tilt_south :: proc(rocks: []u8, rows, cols: int) {
+tilt_south :: #force_inline proc(rocks: []u8, rows, cols: int) {
 	for c in 0 ..< cols {
 		stop, count := rows, 0
 		for r := rows - 1; r >= 0; r -= 1 {
@@ -105,8 +101,7 @@ tilt_south :: proc(rocks: []u8, rows, cols: int) {
 }
 
 
-@(private = "file")
-tilt_west :: proc(rocks: []u8, rows, cols: int) {
+tilt_west :: #force_inline proc(rocks: []u8, rows, cols: int) {
 	for r in 0 ..< rows {
 		stop, count := -1, 0
 		for c := 0; c < cols; c += 1 {
@@ -124,8 +119,7 @@ tilt_west :: proc(rocks: []u8, rows, cols: int) {
 	}
 }
 
-@(private = "file")
-tilt_east :: proc(rocks: []u8, rows, cols: int) {
+tilt_east :: #force_inline proc(rocks: []u8, rows, cols: int) {
 	for r in 0 ..< rows {
 		stop, count := cols, 0
 		for c := cols - 1; c >= 0; c -= 1 {
@@ -142,16 +136,16 @@ tilt_east :: proc(rocks: []u8, rows, cols: int) {
 	}
 }
 
-@(private = "file")
-get_load :: proc(rocks: []u8, rows, cols: int) -> (load: int) {
+get_load :: #force_inline proc(rocks: []u8, rows, cols: int) -> (load: int) {
 	for r in 0 ..< rows {
 		per_rock := rows - r
-		for rock in rocks[r * cols:(r + 1) * cols] do if rock == 'O' do load += per_rock
+		for rock in rocks[r * cols:(r + 1) * cols] {
+            if rock == 'O' do load += per_rock
+        }
 	}
 	return
 }
 
-@(private = "file")
 test_input :: `O....#....
 O.OO#....#
 .....##...
@@ -164,7 +158,7 @@ O.#..O.#.#
 #OO..#....
 `
 
-@(test)
+@(test, private)
 test_example_d14_p1 :: proc(t: ^testing.T) {
 	part1, _ := day14(test_input)
 	part1_expected := int(136)
@@ -175,7 +169,7 @@ test_example_d14_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d14_p2 :: proc(t: ^testing.T) {
 	_, part2 := day14(test_input)
 	part2_expected := int(64)
@@ -186,6 +180,7 @@ test_example_d14_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day14 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -194,6 +189,7 @@ setup_day14 :: proc(
 	return nil
 }
 
+@(private)
 bench_day14 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

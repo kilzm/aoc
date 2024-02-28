@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -8,10 +9,8 @@ import "core:testing"
 import "core:thread"
 import "core:time"
 
-@(private = "file")
 DAY :: 16
 
-@(private = "file")
 Dir :: enum {
 	NONE = -1,
 	NORTH,
@@ -20,15 +19,14 @@ Dir :: enum {
 	WEST,
 }
 
-@(private = "file")
 Graph :: [4][110]#soa[110]Dest
 
-@(private = "file")
 Dest :: struct {
 	pos1, pos2: [2]int,
 	dir1, dir2: Dir,
 }
 
+@(private)
 day16 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
 	graph, rows, cols := parse(input)
@@ -91,7 +89,7 @@ day16 :: proc(input: string) -> (result_t, result_t) {
 		}
 	}
 
-	T :: 20
+	T :: 22
 	threads: [T]^thread.Thread
 	results: [T]int
 	per_thread, start := npoints / T + 1, 0
@@ -111,7 +109,6 @@ day16 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 get_energized :: #force_inline proc(
 	graph: ^Graph,
 	rows, cols: int,
@@ -136,7 +133,7 @@ get_energized :: #force_inline proc(
 		}
 	}
 
-	for visit in visits {
+        for &visit in visits {
 		v := visit.x | visit.y | visit.z | visit.w
 		energized += int(bits.count_ones(v))
 	}
@@ -144,7 +141,6 @@ get_energized :: #force_inline proc(
 	return
 }
 
-@(private = "file")
 update :: #force_inline proc(
 	steps: ^[dynamic]Dest,
 	graph: ^Graph,
@@ -171,7 +167,6 @@ update :: #force_inline proc(
 	}
 }
 
-@(private = "file")
 parse :: #force_inline proc(input: string) -> (graph: Graph, rows, cols: int) {
 	it := input[:]
 	cols = strings.index_rune(input, '\n')
@@ -216,7 +211,6 @@ parse :: #force_inline proc(input: string) -> (graph: Graph, rows, cols: int) {
 	return
 }
 
-@(private = "file")
 test_input :: `.|...\....
 |.-.\.....
 .....|-...
@@ -229,7 +223,7 @@ test_input :: `.|...\....
 ..//.|....
 `
 
-@(test)
+@(test, private)
 test_example_d16_p1 :: proc(t: ^testing.T) {
 	part1, _ := day16(test_input)
 	part1_expected := int(46)
@@ -240,7 +234,7 @@ test_example_d16_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d16_p2 :: proc(t: ^testing.T) {
 	_, part2 := day16(test_input)
 	part2_expected := int(51)
@@ -251,6 +245,7 @@ test_example_d16_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day16 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -259,6 +254,7 @@ setup_day16 :: proc(
 	return nil
 }
 
+@(private)
 bench_day16 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

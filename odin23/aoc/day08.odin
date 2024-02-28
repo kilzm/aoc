@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -6,12 +7,12 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 8
 
+@(private)
 day08 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: int
-	instructions, network, starts := parse_input(input)
+	instructions, network, starts := parse(input)
 	defer {
 		delete(network)
 		delete(starts)
@@ -22,7 +23,6 @@ day08 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
 solve_p1 :: proc(instructions: []u8, network: []u32) -> (steps: int) {
 	n_instructions := len(instructions)
 	AAA := encode("AAA")
@@ -40,7 +40,6 @@ solve_p1 :: proc(instructions: []u8, network: []u32) -> (steps: int) {
 	return
 }
 
-@(private = "file")
 solve_p2 :: proc(instructions: []u8, network: []u32, starts: []u32) -> (steps: int = 1) {
 	n_instructions := len(instructions)
 	for location in starts {
@@ -57,15 +56,13 @@ solve_p2 :: proc(instructions: []u8, network: []u32, starts: []u32) -> (steps: i
 	return
 }
 
-@(private = "file")
-encode :: proc(location: string) -> (value: u32) {
+encode :: #force_inline proc(location: string) -> (value: u32) {
 	loc := transmute([]u8)location
 	value |= u32(loc[0] - 'A') << 10 | u32(loc[1] - 'A') << 5 | u32(loc[2] - 'A')
 	return
 }
 
-@(private = "file")
-parse_input :: proc(input: string) -> (instructions: []u8, network: []u32, starts_: []u32) {
+parse :: proc(input: string) -> (instructions: []u8, network: []u32, starts_: []u32) {
 	lines := strings.split_lines(input)
 	defer delete(lines)
 	instructions = make([]u8, len(lines[0]))
@@ -81,7 +78,6 @@ parse_input :: proc(input: string) -> (instructions: []u8, network: []u32, start
 	return
 }
 
-@(private = "file")
 test_input_p1 :: `LLR
 
 AAA = (BBB, BBB)
@@ -89,9 +85,9 @@ BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)
 `
 
-@(test)
+@(test, private)
 test_example_d08_p1 :: proc(t: ^testing.T) {
-	instructions, network, _ := parse_input(test_input_p1)
+	instructions, network, _ := parse(test_input_p1)
 	defer {
 		delete(instructions)
 		delete(network)
@@ -105,7 +101,6 @@ test_example_d08_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(private = "file")
 test_input_p2 :: `LR
 
 GGA = (GGB, XXX
@@ -118,9 +113,9 @@ HHZ = (HHB, HHB)
 XXX = (XXX, XXX)
 `
 
-@(test)
+@(test, private)
 test_example_d08_p2 :: proc(t: ^testing.T) {
-	instructions, network, starts := parse_input(test_input_p2)
+	instructions, network, starts := parse(test_input_p2)
 	defer {
 		delete(instructions)
 		delete(network)
@@ -134,6 +129,7 @@ test_example_d08_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day08 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -142,6 +138,7 @@ setup_day08 :: proc(
 	return nil
 }
 
+@(private)
 bench_day08 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

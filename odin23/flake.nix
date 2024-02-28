@@ -25,6 +25,9 @@
         pkgs = import nixpkgs {
           inherit system overlays; 
         };
+        pkgs2 = import nixpkgs {
+          inherit system;
+        };
       in
       {
         devShells = {
@@ -37,6 +40,7 @@
 
         packages = rec {
           odin23 = pkgs.callPackage ./. { stdenv = pkgs.gcc13Stdenv; };
+          odin23-slow = pkgs2.callPackage ./. { odin = pkgs2.odin.override { llvmPackages_13 = pkgs2.llvmPackages_17; }; };
           default = odin23;
         };
 

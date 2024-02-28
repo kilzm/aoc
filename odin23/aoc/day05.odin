@@ -1,3 +1,4 @@
+//+private file
 package aoc
 
 import "core:fmt"
@@ -7,35 +8,26 @@ import "core:strings"
 import "core:testing"
 import "core:time"
 
-@(private = "file")
 DAY :: 5
 
-@(private = "file")
 MapRule :: struct {
 	start, end: i64,
 	offset:     i64,
 }
 
-@(private = "file")
-map_rule_compare :: proc(a, b: MapRule) -> bool {
-	return a.start < b.start
-}
-
-@(private = "file")
 Map :: [dynamic]MapRule
 
-@(private = "file")
-NMAPS :: 7
 
-@(private = "file")
 SeedRange :: struct {
 	start, end: i64,
 }
 
+NMAPS :: 7
 
+@(private)
 day05 :: proc(input: string) -> (result_t, result_t) {
 	part1, part2: i64
-	seeds, mappings := parse_input(input)
+	seeds, mappings := parse(input)
 	defer {
 		delete(seeds)
 		for m in mappings do delete(m)
@@ -50,8 +42,7 @@ day05 :: proc(input: string) -> (result_t, result_t) {
 	return part1, part2
 }
 
-@(private = "file")
-parse_input :: proc(input: string) -> (seeds: []i64, mappings: [NMAPS]Map) {
+parse :: proc(input: string) -> (seeds: []i64, mappings: [NMAPS]Map) {
 	lines := strings.split_lines(input)
 	lines = lines[:len(lines) - 1]
 	seeds_fields := strings.fields(lines[0][7:])
@@ -83,7 +74,10 @@ parse_input :: proc(input: string) -> (seeds: []i64, mappings: [NMAPS]Map) {
 	return
 }
 
-@(private = "file")
+map_rule_compare :: proc(a, b: MapRule) -> bool {
+	return a.start < b.start
+}
+
 get_min_location_p1 :: proc(seeds: []i64, mappings: [NMAPS]Map) -> (min_location: i64) {
 	min_location = bits.I64_MAX
 
@@ -107,7 +101,6 @@ get_min_location_p1 :: proc(seeds: []i64, mappings: [NMAPS]Map) -> (min_location
 	return
 }
 
-@(private = "file")
 get_min_location_p2 :: proc(
 	seed_ranges: []SeedRange,
 	mappings: [NMAPS]Map,
@@ -132,7 +125,6 @@ get_min_location_p2 :: proc(
 	return
 }
 
-@(private = "file")
 map_ranges :: proc(seed_ranges: []SeedRange, mapping: Map) -> []SeedRange {
 	map_single_range :: proc(range: SeedRange, mapping: Map) -> []SeedRange {
 		mapped: [dynamic]SeedRange
@@ -168,7 +160,6 @@ map_ranges :: proc(seed_ranges: []SeedRange, mapping: Map) -> []SeedRange {
 }
 
 
-@(private = "file")
 test_input :: `seeds: 79 14 55 13
 
 seed-to-soil map:
@@ -204,7 +195,7 @@ humidity-to-location map:
 56 93 4
 `
 
-@(test)
+@(test, private)
 test_example_d05_p1 :: proc(t: ^testing.T) {
 	part1, _ := day05(test_input)
 	part1_expected := i64(35)
@@ -215,7 +206,7 @@ test_example_d05_p1 :: proc(t: ^testing.T) {
 	)
 }
 
-@(test)
+@(test, private)
 test_example_d05_p2 :: proc(t: ^testing.T) {
 	_, part2 := day05(test_input)
 	part2_expected := i64(46)
@@ -226,6 +217,7 @@ test_example_d05_p2 :: proc(t: ^testing.T) {
 	)
 }
 
+@(private)
 setup_day05 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,
@@ -234,6 +226,7 @@ setup_day05 :: proc(
 	return nil
 }
 
+@(private)
 bench_day05 :: proc(
 	options: ^time.Benchmark_Options,
 	allocator := context.allocator,

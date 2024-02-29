@@ -11,7 +11,7 @@ result_t :: union {
 	string,
 }
 
-NDAYS :: 19
+NDAYS :: 20
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
@@ -36,6 +36,7 @@ main :: proc() {
 		day17,
 		day18,
 		day19,
+		day20,
 	}
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
@@ -58,6 +59,7 @@ main :: proc() {
 		{setup_day17, bench_day17},
 		{setup_day18, bench_day18},
 		{setup_day19, bench_day19},
+		{setup_day20, bench_day20},
 	}
 
 	bench := parse_args()

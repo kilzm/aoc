@@ -10,7 +10,7 @@ import os
 @click.option('--day', '-d', required=True, type=click.IntRange(1,25), help='First day to fetch')
 @click.option('--n-days', '-n', type=click.IntRange(1,25), default=1)
 def download_inputs(session_cookie, year, day, n_days):
-    days = range(day, min(day + n_days, 25))
+    days = range(day, min(day + n_days, 26))
     year = int(year)
     cookies = {'session' : session_cookie}
     url_of_day = lambda d: f'https://adventofcode.com/{year}/day/{d}/input'

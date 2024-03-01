@@ -17,21 +17,20 @@
         devShells = {
           default = pkgs.mkShell {
             packages = with odin-pkgs; [
-              odin-latest
+              odin-dev-2024-02-sroa
               ols
             ];
           };
         };
 
         packages = rec {
-          odin23 = pkgs.callPackage ./. { odin = odin-pkgs.odin-latest; };
-          odin23-fast = pkgs.callPackage ./. { odin = odin-pkgs.odin-sroa-pass; };
-          default = odin23-fast;
+          odin23 = pkgs.callPackage ./. { odin = odin-pkgs.odin-dev-2024-02-sroa; };
+          default = odin23;
         };
 
         apps = rec {
-          odin23-fast = flake-utils.lib.mkApp { drv = self.packages.${system}.odin23-fast; };
-          default = odin23-fast;
+          odin23 = flake-utils.lib.mkApp { drv = self.packages.${system}.odin23; };
+          default = odin23;
         };
       }
     );

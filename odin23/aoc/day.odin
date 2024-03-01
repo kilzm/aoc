@@ -1,4 +1,5 @@
 //+private file
+// +build ignore
 package aoc
 
 import "core:fmt"

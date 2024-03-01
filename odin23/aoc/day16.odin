@@ -133,7 +133,7 @@ get_energized :: #force_inline proc(
 		}
 	}
 
-        for &visit in visits {
+	for &visit in visits {
 		v := visit.x | visit.y | visit.z | visit.w
 		energized += int(bits.count_ones(v))
 	}

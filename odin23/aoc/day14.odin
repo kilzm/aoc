@@ -140,8 +140,8 @@ get_load :: #force_inline proc(rocks: []u8, rows, cols: int) -> (load: int) {
 	for r in 0 ..< rows {
 		per_rock := rows - r
 		for rock in rocks[r * cols:(r + 1) * cols] {
-            if rock == 'O' do load += per_rock
-        }
+			if rock == 'O' do load += per_rock
+		}
 	}
 	return
 }

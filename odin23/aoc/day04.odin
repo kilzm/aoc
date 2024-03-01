@@ -79,7 +79,7 @@ fill_nums :: proc(line: string, wnums, nums: []int, layout: Layout) {
 
 
 get_count_and_score :: #force_inline proc(wnums, nums: []int) -> (count, score: int) {
-    lut := []int{0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024}
+	lut := []int{0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024}
 	for num in nums {
 		if slice.contains(wnums, num) do count += 1
 	}

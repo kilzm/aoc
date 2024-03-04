@@ -8,5 +8,4 @@ result
 .direnv/
 compile_commands.json
 
-ols.json
 aoc.bin

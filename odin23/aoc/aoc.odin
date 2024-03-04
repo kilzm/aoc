@@ -11,7 +11,7 @@ result_t :: union {
 	string,
 }
 
-NDAYS :: 20
+NDAYS :: 21
 
 day_proc :: #type proc(_: string) -> (result_t, result_t)
 
@@ -37,6 +37,7 @@ main :: proc() {
 		day18,
 		day19,
 		day20,
+		day21,
 	}
 
 	all_bench_procs := [NDAYS]([2]bench_proc) {
@@ -60,6 +61,7 @@ main :: proc() {
 		{setup_day18, bench_day18},
 		{setup_day19, bench_day19},
 		{setup_day20, bench_day20},
+		{setup_day21, bench_day21},
 	}
 
 	bench := parse_args()
@@ -77,7 +79,7 @@ parse_args :: proc() -> (bench: bool) {
 	args := os.args
 	defer delete(args)
 	for i in 0 ..< len(args) {
-		if strings.compare(os.args[i], "--bench") == 0 {
+		if os.args[i] == "--bench" {
 			bench = true
 		}
 	}
